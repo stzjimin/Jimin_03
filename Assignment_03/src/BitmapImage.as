@@ -8,6 +8,12 @@ package
 		private var _name:String;
 		private var _pixels:int;
 		
+		/**
+		 *비트맵이미지는 비트맵과 해당이미지의 이름으로 저장 
+		 * @param name = 이미지의 이름
+		 * @param bitmap = 해당이미지의 비트맵
+		 * 
+		 */		
 		public function BitmapImage(name:String, bitmap:Bitmap)
 		{
 			_name = name;

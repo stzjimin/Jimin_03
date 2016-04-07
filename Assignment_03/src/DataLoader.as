@@ -3,76 +3,72 @@ package
 	import flash.display.Bitmap;
 	import flash.display.Loader;
 	import flash.events.Event;
-	import flash.events.UncaughtErrorEvent;
 	import flash.filesystem.File;
-	import flash.net.FileReference;
 	import flash.net.URLRequest;
-	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
+	import flash.events.IOErrorEvent;
 
 	public class DataLoader
 	{
 	//	private static const NAME_REGEX:RegExp = /([^\?\/\\]+?)(?:\.([\w\-]+))?(?:\?.*)?$/;
 		
-		private var _dataQueue:Vector.<BitmapImage>;
-
-		public function get dataQueue():Vector.<BitmapImage>
-		{
-			return _dataQueue;
-		}
+		private var _dataQueue:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
 
 		private var _completeFunc:Function;
 		private var _libName:String;
-		private var _assetLength:int;
-		private var _assetCounter:int = 0;
-	//	private var _bitmapVector:Vector.<BitmapImage>;
-		/*
-		private var _url:String;
-		private var _id:String;
-		private var _loader:Loader;
-		private var _completeFunc:Function;
-		private var _loadedBitmap:Bitmap;
-		*/
+		private var _assetLength:int;			//폴더내의 파일 개수
+		private var _assetCounter:int = 0;		//로드된 비트맵의 개수
 		
+		/**
+		 *데이타 로더는 폴더내부의 이미지들을 모두 받아옴(starling에 있는 AssetManager를 참고)
+		 * @param libName = 폴더이름
+		 * @param func = 반환하기위한 함수
+		 * 
+		 */		
 		public function DataLoader(libName:String, func:Function)
 		{
 			_dataQueue = new Vector.<BitmapImage>();
 			_completeFunc = func;
 			_libName = libName;
-			/*
-			_loader = new Loader();
-			_id = id;
-			_url = url;
-			_completeFunc = func;
-			*/
 			
-			enqueue(File.applicationDirectory.resolvePath(_libName));
+			enQueue(File.applicationDirectory.resolvePath(_libName));
 		}
 		
-		private function enqueue(...rawAssets):void
+		public function get dataQueue():Vector.<BitmapImage>
 		{
-			var urlRequest:URLRequest = null;
+			return _dataQueue;
+		}
+		
+		/**
+		 * 폴더의 경로로 들어간 뒤 해당 폴더내의 이미지들을 로드하기위한 함수
+		 * @param rawAssets
+		 * 
+		 */		
+		private function enQueue(...rawAssets):void
+		{
+			if(!rawAssets["isDirectory"])
+				_assetLength = rawAssets.length;
 			for each(var rawAsset:Object in rawAssets)
 			{
 				if(rawAsset["isDirectory"])
-					enqueue.apply(this, rawAsset["getDirectoryListing"]());
+					enQueue.apply(this, rawAsset["getDirectoryListing"]());
 				else if(getQualifiedClassName(rawAsset) == "flash.filesystem::File")
 				{
-					_assetLength = rawAssets.length;
-				//	trace(decodeURI(rawAsset["url"]).substring(5,decodeURI(rawAsset["url"]).length));
-					urlRequest = new URLRequest(decodeURI(rawAsset["url"]).substring(5,decodeURI(rawAsset["url"]).length));
-				//	trace(getName(rawAsset));
-				//	trace(decodeURI(rawAsset["url"]));
+					var urlRequest:URLRequest = new URLRequest(decodeURI(rawAsset["url"]).substring(5,decodeURI(rawAsset["url"]).length));
 					var loader:Loader = new Loader();
 					loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onCompleteLoad);
-				//	loader.contentLoaderInfo.url
-				//	loader.load(new URLRequest(decodeURI(rawAsset["url"])));
+					loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, uncaughtError);
 					loader.load(urlRequest);
-				//	trace(urlRequest.url);
 				}
 			}
 		}
 		
+		/**
+		 *이미지파일의 URL주소로 해당 이미지파일의 이름을 구하는 함수 
+		 * @param rawAssetURL
+		 * @return 
+		 * 
+		 */		
 		private function getName(rawAssetURL:String):String
 		{
 			var fileName:String;
@@ -82,25 +78,31 @@ package
 			return fileName;
 		}
 		
-		private function uncaughtError(event:UncaughtErrorEvent):void
+		/**
+		 *로더의 IO애러시 호출될 함수 
+		 * @param event
+		 * 
+		 */		
+		private function uncaughtError(event:IOErrorEvent):void
 		{
-			trace("error!!!");
+			trace("Please Check Files!!!");
 		}
 		
-		private function onCompleteLoad(event:Object):void
+		/**
+		 *로더가 개별 이미지의 로드를 했을 경우 호출될 함수 
+		 * @param event
+		 * 호출된 로더를 추적한 뒤 해당 로더가 가지고 있는 url과 content를 이용하여 BitmapImage객체 생성
+		 */		
+		private function onCompleteLoad(event:Event):void
 		{
-		//	trace(event.currentTarget.url.substring(5,event.currentTarget.url.length));
-		//	trace(event.currentTarget.loader.content);
 			var bitmapImage:BitmapImage = new BitmapImage(getName(event.currentTarget.url.substring(5,event.currentTarget.url.length)) ,event.currentTarget.loader.content as Bitmap);
 			_dataQueue.push(bitmapImage);
-		//	trace(getName(event.currentTarget.Loader.content));
-		//	_loadedBitmap = event.currentTarget.Loader.content as Bitmap;
+			event.currentTarget.removeEventListener(Event.COMPLETE, onCompleteLoad);
+			event.currentTarget.removeEventListener(IOErrorEvent.IO_ERROR, uncaughtError);
 			_assetCounter++;
+			
 			if(_assetCounter >= _assetLength)
-			{
-			//	trace("gg");
 				_completeFunc(_dataQueue);
-			}
 		}
 	}
 }
