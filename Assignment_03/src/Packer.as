@@ -27,7 +27,7 @@ package
 		{
 			_imageQueue = dataQueue;
 			_imageQueue = _imageQueue.sort(comparleFunc);
-		//	trace(_imageQueue.length);
+			trace(_imageQueue.length);
 			
 			for(var i:int = 0; i < _imageQueue.length; i++)
 			{
@@ -73,6 +73,11 @@ package
 					bitmapHeight += maxLinHeight;
 					bitmapWidth = 0;
 					maxLinHeight = bitmapImage.bitmap.height;
+				}
+				if(bitmapHeight + bitmapImage.bitmap.height > MaxHeight)
+				{
+					trace("너무 큼");
+					break;
 				}
 				_packedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, new Point(bitmapWidth, bitmapHeight),mult,mult,mult,mult);
 				bitmapWidth += bitmapImage.bitmap.width;
