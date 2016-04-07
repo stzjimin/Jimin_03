@@ -8,6 +8,7 @@ package
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
 	import flash.geom.Rectangle;
+	import flash.system.System;
 	import flash.utils.ByteArray;
 
 	[SWF(width="1024", height="1024", frameRate="60", backgroundColor="#FFFFFF")]
@@ -37,7 +38,7 @@ package
 			
 			var bitmapData:BitmapData = _packer.packedBitmapData;
 			var byteArray:ByteArray = new ByteArray();
-			bitmapData.encode(new Rectangle(0, 0, 1024, 1024), new PNGEncoderOptions(), byteArray);
+			bitmapData.encode(new Rectangle(0, 0, _packer.packedBitmapDataWidth, _packer.packedBitmapDataHeight), new PNGEncoderOptions(), byteArray);
 			
 			var localFile:File = File.documentsDirectory.resolvePath("bild.png");
 			var fileAccess:FileStream = new FileStream();

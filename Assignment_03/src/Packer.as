@@ -6,11 +6,14 @@ package
 
 	public class Packer
 	{
+		private static const MaxHeight:int = 1024;
+		private static const MaxWidth:int = 1024;
+		
 		private var _packedBitmapData:BitmapData;
 		private var _imageStack:Vector.<BitmapImage>;
 		private var _imageQueue:Vector.<BitmapImage>;
-		private static const MaxHeight:int = 1024;
-		private static const MaxWidth:int = 1024;
+		private var _packedBitmapDataWidth:int;
+		private var _packedBitmapDataHeight:int;
 		
 		public function Packer()
 		{
@@ -20,6 +23,16 @@ package
 			var bit:Bitmap = new Bitmap();
 		}
 		
+		public function get packedBitmapDataHeight():int
+		{
+			return _packedBitmapDataHeight;
+		}
+
+		public function get packedBitmapDataWidth():int
+		{
+			return _packedBitmapDataWidth;
+		}
+
 		public function get imageQueue():Vector.<BitmapImage>
 		{
 			return _imageQueue;
@@ -99,8 +112,39 @@ package
 				bitmapImage.y = bitmapHeight;
 				_imageQueue.push(bitmapImage);
 				bitmapWidth += bitmapImage.bitmap.width;
+				if(_packedBitmapDataWidth < bitmapWidth)
+					_packedBitmapDataWidth = bitmapWidth;
+				_packedBitmapDataHeight = bitmapImage.y + maxLinHeight;
+			}
+			trace("전w = " + _packedBitmapDataWidth);
+			trace("전h = " + _packedBitmapDataHeight);
+			
+			var count:int = 2;
+			while(true)
+			{
+				if(count < _packedBitmapDataWidth)
+					count *= 2;
+				else
+				{
+					_packedBitmapDataWidth = count;
+					break;
+				}
 			}
 			
+			count = 2;
+			while(true)
+			{
+				if(count < _packedBitmapDataHeight)
+					count *= 2;
+				else
+				{
+					_packedBitmapDataHeight = count;
+					break;
+				}
+			}
+			
+			trace("후w = " + _packedBitmapDataWidth);
+			trace("후h = " + _packedBitmapDataHeight);
 			
 			function searchFit(fitWidth:int):Boolean
 			{
