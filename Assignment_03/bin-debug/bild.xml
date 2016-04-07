@@ -1,0 +1,14 @@
+<TextureAtlas ImagePath="bild.png">
+<SubTexture name="ex.png" x="0" y="0" width="640" height="480"/>
+<SubTexture name="pika3.png" x="640" y="0" width="225" height="225"/>
+<SubTexture name="19_1.png" x="865" y="0" width="100" height="98"/>
+<SubTexture name="revert.png" x="965" y="0" width="30" height="35"/>
+<SubTexture name="contents.png" x="0" y="480" width="512" height="256"/>
+<SubTexture name="19.png" x="512" y="480" width="230" height="218"/>
+<SubTexture name="pika2.png" x="742" y="480" width="241" height="209"/>
+<SubTexture name="minimize.png" x="983" y="480" width="32" height="32"/>
+<SubTexture name="oris.png" x="0" y="736" width="180" height="180"/>
+<SubTexture name="mario.png" x="180" y="736" width="405" height="175"/>
+<SubTexture name="close.png" x="585" y="736" width="32" height="32"/>
+<SubTexture name="titleBar.png" x="0" y="916" width="512" height="32"/>
+</TextureAtlas>

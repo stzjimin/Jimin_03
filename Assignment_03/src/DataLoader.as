@@ -95,7 +95,7 @@ package
 		 */		
 		private function onCompleteLoad(event:Event):void
 		{
-			var bitmapImage:BitmapImage = new BitmapImage(getName(event.currentTarget.url.substring(5,event.currentTarget.url.length)) ,event.currentTarget.loader.content as Bitmap);
+			var bitmapImage:BitmapImage = new BitmapImage(getName(event.currentTarget.url.substring(5,event.currentTarget.url.length-4)) ,event.currentTarget.loader.content as Bitmap);
 			_dataStack.push(bitmapImage);
 			event.currentTarget.removeEventListener(Event.COMPLETE, onCompleteLoad);
 			event.currentTarget.removeEventListener(IOErrorEvent.IO_ERROR, uncaughtError);

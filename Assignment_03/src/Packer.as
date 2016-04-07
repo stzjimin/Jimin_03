@@ -8,6 +8,7 @@ package
 	{
 		private var _packedBitmapData:BitmapData;
 		private var _imageStack:Vector.<BitmapImage>;
+		private var _imageQueue:Vector.<BitmapImage>;
 		private static const MaxHeight:int = 1024;
 		private static const MaxWidth:int = 1024;
 		
@@ -15,8 +16,15 @@ package
 		{
 			_packedBitmapData = new BitmapData(MaxWidth, MaxHeight);
 			_imageStack = new Vector.<BitmapImage>;
+			_imageQueue = new Vector.<BitmapImage>;
+			var bit:Bitmap = new Bitmap();
 		}
 		
+		public function get imageQueue():Vector.<BitmapImage>
+		{
+			return _imageQueue;
+		}
+
 		public function get packedBitmapData():BitmapData
 		{
 			return _packedBitmapData;
@@ -29,8 +37,7 @@ package
 		 */		
 		public function goPacking(dataStack:Vector.<BitmapImage>):void
 		{
-			_imageStack = dataStack;
-			_imageStack = _imageStack.sort(comparleFunc);
+			_imageStack = dataStack.sort(comparleFunc);
 			trace(_imageStack.length);
 			
 			for(var i:int = 0; i < _imageStack.length; i++)
@@ -88,6 +95,9 @@ package
 					break;
 				}
 				_packedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, new Point(bitmapWidth, bitmapHeight),mult,mult,mult,mult);
+				bitmapImage.x = bitmapWidth;
+				bitmapImage.y = bitmapHeight;
+				_imageQueue.push(bitmapImage);
 				bitmapWidth += bitmapImage.bitmap.width;
 			}
 			
