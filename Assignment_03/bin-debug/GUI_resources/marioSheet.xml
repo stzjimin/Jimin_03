@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<TextureAtlas ImagePath="mario.png">
-<SubTexture name="mario0001" x="0" y="0" width="120" height="175"/>
-<SubTexture name="mario0002" x="120" y="0" width="120" height="175"/>
-<SubTexture name="mario0003" x="240" y="0" width="165" height="175"/>
-</TextureAtlas>
