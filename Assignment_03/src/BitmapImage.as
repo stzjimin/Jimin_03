@@ -6,7 +6,6 @@ package
 	{
 		private var _bitmap:Bitmap;
 		private var _name:String;
-		private var _pixels:int;
 		private var _x:int;
 		private var _y:int;
 		
@@ -20,7 +19,6 @@ package
 		{
 			_name = name;
 			_bitmap = bitmap;
-			_pixels = (_bitmap.width * _bitmap.height);
 		}
 
 		public function get y():int
@@ -41,11 +39,6 @@ package
 		public function set x(value:int):void
 		{
 			_x = value;
-		}
-
-		public function get pixels():int
-		{
-			return _pixels;
 		}
 
 		public function get name():String
