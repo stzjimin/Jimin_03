@@ -91,7 +91,7 @@ package
 			while(_imageStack.length != 0)
 			{
 				var bitmapImage:BitmapImage = _imageStack.pop();
-				trace(bitmapImage.name + " = " + bitmapImage.bitmap.width);
+			//	trace(bitmapImage.name + " = " + bitmapImage.bitmap.width);
 				if(bitmapWidth + bitmapImage.bitmap.width >= MaxWidth)
 				{
 					_imageStack.push(bitmapImage)
@@ -148,19 +148,20 @@ package
 			
 			function searchFit(fitWidth:int):Boolean
 			{
+				trace("서치함");
 				for(var i:int = _imageStack.length-1; i >= 0; i--)
 				{
 					if(_imageStack[i].bitmap.width < fitWidth)
 					{
 						var bitmapTemp:BitmapImage = _imageStack[i];
-						trace(bitmapTemp.name);
+					//	trace(bitmapTemp.name);
 						_imageStack.removeAt(i);
 						_imageStack.push(bitmapTemp);
-						trace("true");
+					//	trace("true");
 						return true;
 					}
 				}
-				trace("false");
+			//	trace("false");
 				return false;
 			}
 		}
