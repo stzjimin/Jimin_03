@@ -12,7 +12,7 @@ package
 	{
 	//	private static const NAME_REGEX:RegExp = /([^\?\/\\]+?)(?:\.([\w\-]+))?(?:\?.*)?$/;
 		
-		private var _dataQueue:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
+		private var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
 
 		private var _completeFunc:Function;
 		private var _libName:String;
@@ -27,7 +27,7 @@ package
 		 */		
 		public function DataLoader(libName:String, func:Function)
 		{
-			_dataQueue = new Vector.<BitmapImage>();
+			_dataStack = new Vector.<BitmapImage>();
 			_completeFunc = func;
 			_libName = libName;
 			
@@ -36,7 +36,7 @@ package
 		
 		public function get dataQueue():Vector.<BitmapImage>
 		{
-			return _dataQueue;
+			return _dataStack;
 		}
 		
 		/**
@@ -96,13 +96,13 @@ package
 		private function onCompleteLoad(event:Event):void
 		{
 			var bitmapImage:BitmapImage = new BitmapImage(getName(event.currentTarget.url.substring(5,event.currentTarget.url.length)) ,event.currentTarget.loader.content as Bitmap);
-			_dataQueue.push(bitmapImage);
+			_dataStack.push(bitmapImage);
 			event.currentTarget.removeEventListener(Event.COMPLETE, onCompleteLoad);
 			event.currentTarget.removeEventListener(IOErrorEvent.IO_ERROR, uncaughtError);
 			_assetCounter++;
 			
 			if(_assetCounter >= _assetLength)
-				_completeFunc(_dataQueue);
+				_completeFunc(_dataStack);
 		}
 	}
 }

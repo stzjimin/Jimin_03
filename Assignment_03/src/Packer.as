@@ -7,14 +7,14 @@ package
 	public class Packer
 	{
 		private var _packedBitmapData:BitmapData;
-		private var _imageQueue:Vector.<BitmapImage>;
+		private var _imageStack:Vector.<BitmapImage>;
 		private static const MaxHeight:int = 1024;
 		private static const MaxWidth:int = 1024;
 		
 		public function Packer()
 		{
 			_packedBitmapData = new BitmapData(MaxWidth, MaxHeight);
-			_imageQueue = new Vector.<BitmapImage>;
+			_imageStack = new Vector.<BitmapImage>;
 			new DataLoader("GUI_resources", completeDataLoad);
 		}
 		
@@ -23,15 +23,15 @@ package
 			return _packedBitmapData;
 		}
 
-		private function completeDataLoad(dataQueue:Vector.<BitmapImage>):void
+		private function completeDataLoad(dataStack:Vector.<BitmapImage>):void
 		{
-			_imageQueue = dataQueue;
-			_imageQueue = _imageQueue.sort(comparleFunc);
-			trace(_imageQueue.length);
+			_imageStack = dataStack;
+			_imageStack = _imageStack.sort(comparleFunc);
+			trace(_imageStack.length);
 			
-			for(var i:int = 0; i < _imageQueue.length; i++)
+			for(var i:int = 0; i < _imageStack.length; i++)
 			{
-				var data:BitmapImage = _imageQueue[i];
+				var data:BitmapImage = _imageStack[i];
 			//	trace(data.name + " = " + data.bitmap.height);
 			}
 			
@@ -59,17 +59,17 @@ package
 			var mult:uint = 0xFF; // 50% 
 			var bitmapWidth:int = 0;
 			var bitmapHeight:int = 0;
-			var maxLinHeight:int = _imageQueue[_imageQueue.length-1].bitmap.height;
-			while(_imageQueue.length != 0)
+			var maxLinHeight:int = _imageStack[_imageStack.length-1].bitmap.height;
+			while(_imageStack.length != 0)
 			{
-				var bitmapImage:BitmapImage = _imageQueue.pop();
+				var bitmapImage:BitmapImage = _imageStack.pop();
 				trace(bitmapImage.name + " = " + bitmapImage.bitmap.width);
 				if(bitmapWidth + bitmapImage.bitmap.width >= MaxWidth)
 				{
-					_imageQueue.push(bitmapImage)
+					_imageStack.push(bitmapImage)
 					if(searchFit(MaxWidth - bitmapWidth))
 						continue;
-					bitmapImage = _imageQueue.pop();
+					bitmapImage = _imageStack.pop();
 					bitmapHeight += maxLinHeight;
 					bitmapWidth = 0;
 					maxLinHeight = bitmapImage.bitmap.height;
@@ -81,19 +81,18 @@ package
 				}
 				_packedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, new Point(bitmapWidth, bitmapHeight),mult,mult,mult,mult);
 				bitmapWidth += bitmapImage.bitmap.width;
-			//	_packedBitmapData = _packedBitmapData
 			}
 			
 			function searchFit(fitWidth:int):Boolean
 			{
-				for(var i:int = _imageQueue.length-1; i >= 0; i--)
+				for(var i:int = _imageStack.length-1; i >= 0; i--)
 				{
-					if(_imageQueue[i].bitmap.width < fitWidth)
+					if(_imageStack[i].bitmap.width < fitWidth)
 					{
-						var bitmapTemp:BitmapImage = _imageQueue[i];
+						var bitmapTemp:BitmapImage = _imageStack[i];
 						trace(bitmapTemp.name);
-						_imageQueue.removeAt(i);
-						_imageQueue.push(bitmapTemp);
+						_imageStack.removeAt(i);
+						_imageStack.push(bitmapTemp);
 						trace("true");
 						return true;
 					}
