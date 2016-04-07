@@ -12,7 +12,7 @@ package
 
 	public class DataLoader
 	{
-		private static const NAME_REGEX:RegExp = /([^\?\/\\]+?)(?:\.([\w\-]+))?(?:\?.*)?$/;
+	//	private static const NAME_REGEX:RegExp = /([^\?\/\\]+?)(?:\.([\w\-]+))?(?:\?.*)?$/;
 		
 		private var _dataQueue:Vector.<BitmapImage>;
 
@@ -23,6 +23,8 @@ package
 
 		private var _completeFunc:Function;
 		private var _libName:String;
+		private var _assetLength:int;
+		private var _assetCounter:int = 0;
 	//	private var _bitmapVector:Vector.<BitmapImage>;
 		/*
 		private var _url:String;
@@ -47,16 +49,16 @@ package
 			enqueue(File.applicationDirectory.resolvePath(_libName));
 		}
 		
-		public function enqueue(...rawAssets):void
+		private function enqueue(...rawAssets):void
 		{
 			var urlRequest:URLRequest = null;
-			trace(rawAssets.length);
 			for each(var rawAsset:Object in rawAssets)
 			{
 				if(rawAsset["isDirectory"])
 					enqueue.apply(this, rawAsset["getDirectoryListing"]());
 				else if(getQualifiedClassName(rawAsset) == "flash.filesystem::File")
 				{
+					_assetLength = rawAssets.length;
 				//	trace(decodeURI(rawAsset["url"]).substring(5,decodeURI(rawAsset["url"]).length));
 					urlRequest = new URLRequest(decodeURI(rawAsset["url"]).substring(5,decodeURI(rawAsset["url"]).length));
 				//	trace(getName(rawAsset));
@@ -71,7 +73,7 @@ package
 			}
 		}
 		
-		public function getName(rawAssetURL:String):String
+		private function getName(rawAssetURL:String):String
 		{
 			var fileName:String;
 			
@@ -79,48 +81,6 @@ package
 			
 			return fileName;
 		}
-		
-		/*
-		public function getName(rawAsset:Object):String
-		{
-			var name:String;
-			
-			if      (rawAsset is String)        name =  rawAsset as String;
-			else if (rawAsset is URLRequest)    name = (rawAsset as URLRequest).url;
-			else if (rawAsset is FileReference) name = (rawAsset as FileReference).name;
-			
-			if (name)
-			{
-				name = name.replace(/%20/g, " "); // URLs use '%20' for spaces
-				name = getBasenameFromUrl(name);
-				
-				if (name) return name;
-				else throw new ArgumentError("Could not extract name from String '" + rawAsset + "'");
-			}
-			else
-			{
-				name = getQualifiedClassName(rawAsset);
-				throw new ArgumentError("Cannot extract names for objects of type '" + name + "'");
-			}
-		}
-		*/
-		
-		public function getBasenameFromUrl(url:String):String
-		{
-			var matches:Array = NAME_REGEX.exec(url);
-			if (matches && matches.length > 0) return matches[1];
-			else return null;
-		}
-		
-		/*
-		public function start():void
-		{
-			_loader.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtError);
-			_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onCompleteLoad);
-			
-			_loader.load(new URLRequest(_url));
-		}
-		*/
 		
 		private function uncaughtError(event:UncaughtErrorEvent):void
 		{
@@ -135,7 +95,12 @@ package
 			_dataQueue.push(bitmapImage);
 		//	trace(getName(event.currentTarget.Loader.content));
 		//	_loadedBitmap = event.currentTarget.Loader.content as Bitmap;
-			_completeFunc(_dataQueue);
+			_assetCounter++;
+			if(_assetCounter >= _assetLength)
+			{
+			//	trace("gg");
+				_completeFunc(_dataQueue);
+			}
 		}
 	}
 }

@@ -12,7 +12,7 @@ package
 		{
 			_name = name;
 			_bitmap = bitmap;
-			_pixels = _bitmap.width * _bitmap.height;
+			_pixels = (_bitmap.width * _bitmap.height);
 		}
 
 		public function get pixels():int
