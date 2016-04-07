@@ -12,7 +12,7 @@ package
 	{
 	//	private static const NAME_REGEX:RegExp = /([^\?\/\\]+?)(?:\.([\w\-]+))?(?:\?.*)?$/;
 		
-		private var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
+		private static var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
 
 		private var _completeFunc:Function;
 		private var _libName:String;
@@ -31,10 +31,10 @@ package
 			_completeFunc = func;
 			_libName = libName;
 			
-			enQueue(File.applicationDirectory.resolvePath(_libName));
+			pushStack(File.applicationDirectory.resolvePath(_libName));
 		}
 		
-		public function get dataQueue():Vector.<BitmapImage>
+		public static function get dataStack():Vector.<BitmapImage>
 		{
 			return _dataStack;
 		}
@@ -44,14 +44,14 @@ package
 		 * @param rawAssets
 		 * 
 		 */		
-		private function enQueue(...rawAssets):void
+		private function pushStack(...rawAssets):void
 		{
 			if(!rawAssets["isDirectory"])
 				_assetLength = rawAssets.length;
 			for each(var rawAsset:Object in rawAssets)
 			{
 				if(rawAsset["isDirectory"])
-					enQueue.apply(this, rawAsset["getDirectoryListing"]());
+					pushStack.apply(this, rawAsset["getDirectoryListing"]());
 				else if(getQualifiedClassName(rawAsset) == "flash.filesystem::File")
 				{
 					var urlRequest:URLRequest = new URLRequest(decodeURI(rawAsset["url"]).substring(5,decodeURI(rawAsset["url"]).length));
@@ -102,7 +102,7 @@ package
 			_assetCounter++;
 			
 			if(_assetCounter >= _assetLength)
-				_completeFunc(_dataStack);
+				_completeFunc();
 		}
 	}
 }

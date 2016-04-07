@@ -15,7 +15,6 @@ package
 		{
 			_packedBitmapData = new BitmapData(MaxWidth, MaxHeight);
 			_imageStack = new Vector.<BitmapImage>;
-			new DataLoader("GUI_resources", completeDataLoad);
 		}
 		
 		public function get packedBitmapData():BitmapData
@@ -23,7 +22,12 @@ package
 			return _packedBitmapData;
 		}
 
-		private function completeDataLoad(dataStack:Vector.<BitmapImage>):void
+		/**
+		 *비트맵데이터들을 하나의 비트맵데이터로 합치기 위한 함수 
+		 * @param dataStack = 비트맵데이터가 들어있는 스택
+		 * 합치기전에 높이순으로 정렬한 후 시작
+		 */		
+		public function goPacking(dataStack:Vector.<BitmapImage>):void
 		{
 			_imageStack = dataStack;
 			_imageStack = _imageStack.sort(comparleFunc);
@@ -36,24 +40,28 @@ package
 			}
 			
 			startPacking();
-			
-			function comparleFunc(data1:BitmapImage, data2:BitmapImage):int
-			{
-				if(data1.bitmap.height < data2.bitmap.height) 
-				{ 
-					return -1;
-				} 
-				else if(data1.bitmap.height > data2.bitmap.height) 
-				{ 
-					return 1; 
-				} 
-				else 
-				{ 
-					return 0; 
-				} 
-			}
 		}
 		
+		private function comparleFunc(data1:BitmapImage, data2:BitmapImage):int
+		{
+			if(data1.bitmap.height < data2.bitmap.height) 
+			{ 
+				return -1;
+			} 
+			else if(data1.bitmap.height > data2.bitmap.height) 
+			{ 
+				return 1; 
+			} 
+			else 
+			{ 
+				return 0; 
+			} 
+		}
+		
+		/**
+		 *높이순으로 정렬된 스택을 pop을 하며 차례로 하나의 비트맵으로 병합 하는 함수
+		 * 최대길이에 도달하면 남은 길이에 들어갈 이미지를 찾은 후 해당 이미지를 스택의 마지막부분으로 옮긴 후 다시 함수를 실행
+		 */		
 		private function startPacking():void
 		{
 			var mult:uint = 0xFF; // 50% 
@@ -82,6 +90,7 @@ package
 				_packedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, new Point(bitmapWidth, bitmapHeight),mult,mult,mult,mult);
 				bitmapWidth += bitmapImage.bitmap.width;
 			}
+			
 			
 			function searchFit(fitWidth:int):Boolean
 			{
