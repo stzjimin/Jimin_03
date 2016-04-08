@@ -1,15 +1,7 @@
 package
 {
 	import flash.display.Bitmap;
-	import flash.display.BitmapData;
-	import flash.display.PNGEncoderOptions;
 	import flash.display.Sprite;
-	import flash.filesystem.File;
-	import flash.filesystem.FileMode;
-	import flash.filesystem.FileStream;
-	import flash.geom.Rectangle;
-	import flash.system.System;
-	import flash.utils.ByteArray;
 
 	[SWF(width="1024", height="1024", frameRate="60", backgroundColor="#FFFFFF")]
 	public class Assignment_03 extends Sprite
@@ -24,7 +16,6 @@ package
 		public function Assignment_03()
 		{
 			new DataLoader("GUI_resources", completeDataLoad);
-		//	addChild(new Bitmap(packer.packedBitmapData));
 		}
 		
 		/**
@@ -37,34 +28,6 @@ package
 			_packer.goPacking(DataLoader.dataStack);
 			addChild(new Bitmap(_packer.packedDataVector[0].packedBitmapData));
 			_encoder.startEncode(_packer.packedDataVector);
-			
-			/*
-			var bitmapData:BitmapData = _packer.packedDataVector[1].packedBitmapData;
-			var byteArray:ByteArray = new ByteArray();
-			//	bitmapData.encode(new Rectangle(0, 0, _packer.packedBitmapDataWidth, _packer.packedBitmapDataHeight), new PNGEncoderOptions(), byteArray);
-			bitmapData.encode(new Rectangle(0, 0, 1024, 1024), new PNGEncoderOptions(), byteArray);
-			
-			var localFile:File = File.documentsDirectory.resolvePath("bild.png");
-			var fileAccess:FileStream = new FileStream();
-			fileAccess.open(localFile, FileMode.WRITE);
-			fileAccess.writeBytes(byteArray, 0, byteArray.length);
-			fileAccess.close();
-			
-			var imageQueue:Vector.<BitmapImage> = _packer.packedDataVector[1].packedImageQueue;
-			trace("test.length = " + imageQueue.length);
-			
-			localFile = File.documentsDirectory.resolvePath("bild.xml");
-			fileAccess.open(localFile, FileMode.WRITE);
-			fileAccess.writeUTFBytes("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-			fileAccess.writeUTFBytes("<TextureAtlas ImagePath=\"" + "bild.png" + "\">\n");
-			while(imageQueue.length != 0)
-			{
-			var image:BitmapImage = imageQueue.shift();
-			fileAccess.writeUTFBytes("<SubTexture name=\"" + image.name + "\" x=\"" + image.x + "\" y=\"" + image.y + "\" width=\"" + image.bitmap.width + "\" height=\"" + image.bitmap.height + "\"/>\n");
-			}
-			fileAccess.writeUTFBytes("</TextureAtlas>");
-			fileAccess.close();
-			*/
 		}
 	}
 }

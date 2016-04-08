@@ -79,8 +79,8 @@ package
 			var mult:uint = 0xFF;
 			var bitmapWidth:int = 0;
 			var bitmapHeight:int = 0;
-			var currentMaxHeight:int = _dataQueue[_dataQueue.length-1].bitmap.height;
-			var currentMaxWidth:int = _dataQueue[_dataQueue.length-1].bitmap.width;
+			currentPackedData.packedBitmapWidth = _dataQueue[_dataQueue.length-1].bitmap.width;
+			currentPackedData.packedBitmapHeight = _dataQueue[_dataQueue.length-1].bitmap.height;
 			var first_rect:Rectangle = new Rectangle(0, 0, currentPackedData.packedBitmapData.width, currentPackedData.packedBitmapData.height);
 			rectArray.push(first_rect);
 			
@@ -102,10 +102,10 @@ package
 						
 						currentPackedData.packedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, point, mult,mult,mult,mult);
 						currentPackedData.packedImageQueue.push(bitmapImage);
-						if(currentMaxHeight < bitmapImage.y+bitmapImage.bitmap.height)
-							currentMaxHeight = bitmapImage.y+bitmapImage.bitmap.height;
-						if(currentMaxWidth < bitmapImage.x+bitmapImage.bitmap.width)
-							currentMaxWidth = bitmapImage.x+bitmapImage.bitmap.width;
+						if(currentPackedData.packedBitmapWidth < bitmapImage.x+bitmapImage.bitmap.width)
+							currentPackedData.packedBitmapWidth = bitmapImage.x+bitmapImage.bitmap.width;
+						if(currentPackedData.packedBitmapHeight < bitmapImage.y+bitmapImage.bitmap.height)
+							currentPackedData.packedBitmapHeight = bitmapImage.y+bitmapImage.bitmap.height;
 						
 						//이미지와 겹쳐지는 공간이 있다면 해당 공간을 분할
 						for(var l:int = rectArray.length-1; l >= 0; l--)
@@ -157,7 +157,6 @@ package
 					}
 				}
 			}
-			trace(count);
 		}
 	}
 }
