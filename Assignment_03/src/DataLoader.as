@@ -11,12 +11,12 @@ package
 	public class DataLoader
 	{
 	//	private static const NAME_REGEX:RegExp = /([^\?\/\\]+?)(?:\.([\w\-]+))?(?:\?.*)?$/;
-		
-		private static var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
 		private const appReg:RegExp = new RegExp(/app:\//);
 		
+		private static var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
+		private static var _libName:String;
+		
 		private var _completeFunc:Function;
-		private var _libName:String;
 		private var _assetLength:int;			//폴더내의 파일 개수
 		private var _assetCounter:int = 0;		//로드된 비트맵의 개수
 		
@@ -35,7 +35,7 @@ package
 			pushStack(File.applicationDirectory.resolvePath(_libName));
 		}
 		
-		public function get libName():String
+		public static function get libName():String
 		{
 			return _libName;
 		}

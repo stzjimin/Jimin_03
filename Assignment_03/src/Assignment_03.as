@@ -15,6 +15,7 @@ package
 	public class Assignment_03 extends Sprite
 	{
 		private var _packer:Packer = new Packer();
+		private var _encoder:Encoder = new Encoder();
 		
 		/**
 		 *프로그램이 시작될 때 이미지파일들을 로딩 
@@ -34,8 +35,10 @@ package
 		private function completeDataLoad():void
 		{
 			_packer.goPacking(DataLoader.dataStack);
-			addChild(new Bitmap(_packer.packedDataVector[1].packedBitmapData));
+			addChild(new Bitmap(_packer.packedDataVector[0].packedBitmapData));
+			_encoder.startEncode(_packer.packedDataVector);
 			
+			/*
 			var bitmapData:BitmapData = _packer.packedDataVector[1].packedBitmapData;
 			var byteArray:ByteArray = new ByteArray();
 			//	bitmapData.encode(new Rectangle(0, 0, _packer.packedBitmapDataWidth, _packer.packedBitmapDataHeight), new PNGEncoderOptions(), byteArray);
@@ -61,6 +64,7 @@ package
 			}
 			fileAccess.writeUTFBytes("</TextureAtlas>");
 			fileAccess.close();
+			*/
 		}
 	}
 }

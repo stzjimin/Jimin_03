@@ -43,7 +43,7 @@ package
 		public function goPacking(dataStack:Vector.<BitmapImage>):void
 		{
 			_dataQueue = dataStack.sort(comparleFunc);
-		//	trace(_imageStack.length);
+		//	_packedDataVector = packedDataVector;
 			
 			startPacking();
 		}
@@ -79,7 +79,8 @@ package
 			var mult:uint = 0xFF;
 			var bitmapWidth:int = 0;
 			var bitmapHeight:int = 0;
-			var maxLinHeight:int = _dataQueue[_dataQueue.length-1].bitmap.height;
+			var currentMaxHeight:int = _dataQueue[_dataQueue.length-1].bitmap.height;
+			var currentMaxWidth:int = _dataQueue[_dataQueue.length-1].bitmap.width;
 			var first_rect:Rectangle = new Rectangle(0, 0, currentPackedData.packedBitmapData.width, currentPackedData.packedBitmapData.height);
 			rectArray.push(first_rect);
 			
@@ -101,8 +102,10 @@ package
 						
 						currentPackedData.packedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, point, mult,mult,mult,mult);
 						currentPackedData.packedImageQueue.push(bitmapImage);
-						if(maxLinHeight < bitmapImage.y+bitmapImage.bitmap.height)
-							maxLinHeight = bitmapImage.y+bitmapImage.bitmap.height;
+						if(currentMaxHeight < bitmapImage.y+bitmapImage.bitmap.height)
+							currentMaxHeight = bitmapImage.y+bitmapImage.bitmap.height;
+						if(currentMaxWidth < bitmapImage.x+bitmapImage.bitmap.width)
+							currentMaxWidth = bitmapImage.x+bitmapImage.bitmap.width;
 						
 						//이미지와 겹쳐지는 공간이 있다면 해당 공간을 분할
 						for(var l:int = rectArray.length-1; l >= 0; l--)
