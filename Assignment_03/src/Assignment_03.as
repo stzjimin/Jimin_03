@@ -38,7 +38,8 @@ package
 			
 			var bitmapData:BitmapData = _packer.packedBitmapData;
 			var byteArray:ByteArray = new ByteArray();
-			bitmapData.encode(new Rectangle(0, 0, _packer.packedBitmapDataWidth, _packer.packedBitmapDataHeight), new PNGEncoderOptions(), byteArray);
+		//	bitmapData.encode(new Rectangle(0, 0, _packer.packedBitmapDataWidth, _packer.packedBitmapDataHeight), new PNGEncoderOptions(), byteArray);
+			bitmapData.encode(new Rectangle(0, 0, 1024, 1024), new PNGEncoderOptions(), byteArray);
 			
 			var localFile:File = File.documentsDirectory.resolvePath("bild.png");
 			var fileAccess:FileStream = new FileStream();
