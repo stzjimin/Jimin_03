@@ -1,6 +1,5 @@
 package
 {
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -11,8 +10,8 @@ package
 		private static const MaxWidth:int = 1024;
 		
 		private var _packedBitmapVector:Vector.<BitmapData>;
+		private var _imageQueueArray:Array;
 		private var _dataQueue:Vector.<BitmapImage>;
-		private var _imageQueue:Vector.<BitmapImage>;
 		private var _packedBitmapDataWidth:int;
 		private var _packedBitmapDataHeight:int;
 		
@@ -20,11 +19,14 @@ package
 		{
 			_packedBitmapVector = new Vector.<BitmapData>();
 			_dataQueue = new Vector.<BitmapImage>;
-			_imageQueue = new Vector.<BitmapImage>;
-			var firstBitmapData:BitmapData = new BitmapData(MaxWidth, MaxHeight);
-			_packedBitmapVector.push(firstBitmapData);
+			_imageQueueArray = new Array();
 		}
 		
+		public function get imageQueueArray():Array
+		{
+			return _imageQueueArray;
+		}
+
 		public function get packedBitmapVector():Vector.<BitmapData>
 		{
 			return _packedBitmapVector;
@@ -38,11 +40,6 @@ package
 		public function get packedBitmapDataWidth():int
 		{
 			return _packedBitmapDataWidth;
-		}
-
-		public function get imageQueue():Vector.<BitmapImage>
-		{
-			return _imageQueue;
 		}
 
 		/**
@@ -82,7 +79,10 @@ package
 		 */		
 		private function startPacking_2():void
 		{
-			var currentPackedBitmapData:BitmapData = _packedBitmapVector[_packedBitmapVector.length-1];
+			var currentPackedBitmapData:BitmapData = new BitmapData(MaxWidth, MaxHeight);
+			_packedBitmapVector.push(currentPackedBitmapData);
+			var imageQueue:Vector.<BitmapImage> = new Vector.<BitmapImage>;
+			_imageQueueArray.push(imageQueue);
 			var count:int = 0;
 			var rectArray:Vector.<Rectangle> = new Vector.<Rectangle>();
 			var mult:uint = 0xFF;
@@ -91,7 +91,7 @@ package
 			var maxLinHeight:int = _dataQueue[_dataQueue.length-1].bitmap.height;
 			var first_rect:Rectangle = new Rectangle(0, 0, currentPackedBitmapData.width, currentPackedBitmapData.height);
 			rectArray.push(first_rect);
-		//	_packedBitmapVector.push(_packedBitmapData);
+			
 			while(_dataQueue.length != 0)
 			{
 				var bitmapImage:BitmapImage = _dataQueue.shift();
@@ -109,7 +109,7 @@ package
 						bitmapImage.y = imageRect.y = rectArray[i].y;
 						
 						currentPackedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, point, mult,mult,mult,mult);
-						_imageQueue.push(bitmapImage);
+						imageQueue.push(bitmapImage);
 						if(maxLinHeight < bitmapImage.y+bitmapImage.bitmap.width)
 							maxLinHeight = bitmapImage.y+bitmapImage.bitmap.width;
 						
@@ -139,16 +139,13 @@ package
 						break;
 					}
 				}
+				
 				if(nonFlag)
 				{
 					count++;
 					_dataQueue.push(bitmapImage);
 					if(_dataQueue.length <= count)
-					{
-						var newPackedBitmapData:BitmapData = new BitmapData(MaxWidth, MaxHeight);
-						_packedBitmapVector.push(newPackedBitmapData);
 						startPacking_2.apply(this);
-					}
 				}
 				
 				//분할된 공간들 중 다른 공간에 포함이되는 공간이 있다면 해당 공간은 삭제 시켜준다
