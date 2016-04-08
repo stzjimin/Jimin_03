@@ -29,7 +29,6 @@ package
 			fileAccess.writeBytes(byteArray, 0, byteArray.length);
 			fileAccess.close();
 			
-			/*
 			var imageQueue:Vector.<BitmapImage> = _packer.imageQueue;
 			trace("test.length = " + imageQueue.length);
 			
@@ -44,7 +43,6 @@ package
 			}
 			fileAccess.writeUTFBytes("</TextureAtlas>");
 			fileAccess.close();
-			
 		}
 		*/
 	}

@@ -1,35 +1,28 @@
 package
 {
-	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 
 	public class Packer
-	{
-		private static const MaxHeight:int = 1024;
-		private static const MaxWidth:int = 1024;
+	{	
+		private const MaxWidth:int = 1024;
+		private const MaxHeight:int = 1024;
 		
-		private var _packedBitmapVector:Vector.<BitmapData>;
-		private var _imageQueueArray:Array;
+		private var _packedDataVector:Vector.<PackedData>;
+		
 		private var _dataQueue:Vector.<BitmapImage>;
 		private var _packedBitmapDataWidth:int;
 		private var _packedBitmapDataHeight:int;
 		
 		public function Packer()
 		{
-			_packedBitmapVector = new Vector.<BitmapData>();
+			_packedDataVector = new Vector.<PackedData>();
 			_dataQueue = new Vector.<BitmapImage>;
-			_imageQueueArray = new Array();
-		}
-		
-		public function get imageQueueArray():Array
-		{
-			return _imageQueueArray;
 		}
 
-		public function get packedBitmapVector():Vector.<BitmapData>
+		public function get packedDataVector():Vector.<PackedData>
 		{
-			return _packedBitmapVector;
+			return _packedDataVector;
 		}
 
 		public function get packedBitmapDataHeight():int
@@ -52,8 +45,7 @@ package
 			_dataQueue = dataStack.sort(comparleFunc);
 		//	trace(_imageStack.length);
 			
-			startPacking_2();
-		//	startPacking();
+			startPacking();
 		}
 		
 		private function comparleFunc(data1:BitmapImage, data2:BitmapImage):int
@@ -77,19 +69,18 @@ package
 		 * 각 이미지들이 여유공간을 찾아간 후 해당 이미지와 겹쳐지는 여유공간은 다시 겹쳐지는 부분을 기준으로 분할하는 방법
 		 * NOTE @구현방식에 문제가 있는지 속도가 생각만큼 나오지는 않습니다
 		 */		
-		private function startPacking_2():void
+		private function startPacking():void
 		{
-			var currentPackedBitmapData:BitmapData = new BitmapData(MaxWidth, MaxHeight);
-			_packedBitmapVector.push(currentPackedBitmapData);
-			var imageQueue:Vector.<BitmapImage> = new Vector.<BitmapImage>;
-			_imageQueueArray.push(imageQueue);
+			var currentPackedData:PackedData = new PackedData(MaxWidth, MaxHeight);
+			_packedDataVector.push(currentPackedData);
+			
 			var count:int = 0;
 			var rectArray:Vector.<Rectangle> = new Vector.<Rectangle>();
 			var mult:uint = 0xFF;
 			var bitmapWidth:int = 0;
 			var bitmapHeight:int = 0;
 			var maxLinHeight:int = _dataQueue[_dataQueue.length-1].bitmap.height;
-			var first_rect:Rectangle = new Rectangle(0, 0, currentPackedBitmapData.width, currentPackedBitmapData.height);
+			var first_rect:Rectangle = new Rectangle(0, 0, currentPackedData.packedBitmapData.width, currentPackedData.packedBitmapData.height);
 			rectArray.push(first_rect);
 			
 			while(_dataQueue.length != 0)
@@ -108,10 +99,10 @@ package
 						bitmapImage.x = imageRect.x = rectArray[i].x;
 						bitmapImage.y = imageRect.y = rectArray[i].y;
 						
-						currentPackedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, point, mult,mult,mult,mult);
-						imageQueue.push(bitmapImage);
-						if(maxLinHeight < bitmapImage.y+bitmapImage.bitmap.width)
-							maxLinHeight = bitmapImage.y+bitmapImage.bitmap.width;
+						currentPackedData.packedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, point, mult,mult,mult,mult);
+						currentPackedData.packedImageQueue.push(bitmapImage);
+						if(maxLinHeight < bitmapImage.y+bitmapImage.bitmap.height)
+							maxLinHeight = bitmapImage.y+bitmapImage.bitmap.height;
 						
 						//이미지와 겹쳐지는 공간이 있다면 해당 공간을 분할
 						for(var l:int = rectArray.length-1; l >= 0; l--)
@@ -145,7 +136,7 @@ package
 					count++;
 					_dataQueue.push(bitmapImage);
 					if(_dataQueue.length <= count)
-						startPacking_2.apply(this);
+						startPacking.apply(this);
 				}
 				
 				//분할된 공간들 중 다른 공간에 포함이되는 공간이 있다면 해당 공간은 삭제 시켜준다
