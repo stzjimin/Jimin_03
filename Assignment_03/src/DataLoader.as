@@ -3,17 +3,18 @@ package
 	import flash.display.Bitmap;
 	import flash.display.Loader;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.filesystem.File;
 	import flash.net.URLRequest;
 	import flash.utils.getQualifiedClassName;
-	import flash.events.IOErrorEvent;
 
 	public class DataLoader
 	{
 	//	private static const NAME_REGEX:RegExp = /([^\?\/\\]+?)(?:\.([\w\-]+))?(?:\?.*)?$/;
 		
 		private static var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
-
+		private const appReg:RegExp = new RegExp(/app:\//);
+		
 		private var _completeFunc:Function;
 		private var _libName:String;
 		private var _assetLength:int;			//폴더내의 파일 개수
@@ -32,6 +33,11 @@ package
 			_libName = libName;
 			
 			pushStack(File.applicationDirectory.resolvePath(_libName));
+		}
+		
+		public function get libName():String
+		{
+			return _libName;
 		}
 		
 		public static function get dataStack():Vector.<BitmapImage>
@@ -54,7 +60,9 @@ package
 					pushStack.apply(this, rawAsset["getDirectoryListing"]());
 				else if(getQualifiedClassName(rawAsset) == "flash.filesystem::File")
 				{
-					var urlRequest:URLRequest = new URLRequest(decodeURI(rawAsset["url"]).substring(5,decodeURI(rawAsset["url"]).length));
+				//	trace(decodeURI(rawAsset["url"]).replace(appReg,""));
+				//	var urlRequest:URLRequest = new URLRequest(decodeURI(rawAsset["url"]).substring(5,decodeURI(rawAsset["url"]).length));
+					var urlRequest:URLRequest = new URLRequest(decodeURI(rawAsset["url"]).replace(appReg,""));
 					var loader:Loader = new Loader();
 					loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onCompleteLoad);
 					loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, uncaughtError);
@@ -95,7 +103,7 @@ package
 		 */		
 		private function onCompleteLoad(event:Event):void
 		{
-			var bitmapImage:BitmapImage = new BitmapImage(getName(event.currentTarget.url.substring(5,event.currentTarget.url.length-4)) ,event.currentTarget.loader.content as Bitmap);
+			var bitmapImage:BitmapImage = new BitmapImage(getName(event.currentTarget.url.replace(appReg,"")) ,event.currentTarget.loader.content as Bitmap);
 			_dataStack.push(bitmapImage);
 			event.currentTarget.removeEventListener(Event.COMPLETE, onCompleteLoad);
 			event.currentTarget.removeEventListener(IOErrorEvent.IO_ERROR, uncaughtError);

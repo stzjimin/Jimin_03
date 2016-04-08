@@ -34,9 +34,9 @@ package
 		private function completeDataLoad():void
 		{
 			_packer.goPacking(DataLoader.dataStack);
-			addChild(new Bitmap(_packer.packedBitmapData));
+			addChild(new Bitmap(_packer.packedBitmapVector[0]));
 			
-			var bitmapData:BitmapData = _packer.packedBitmapData;
+			var bitmapData:BitmapData = _packer.packedBitmapVector[0];
 			var byteArray:ByteArray = new ByteArray();
 		//	bitmapData.encode(new Rectangle(0, 0, _packer.packedBitmapDataWidth, _packer.packedBitmapDataHeight), new PNGEncoderOptions(), byteArray);
 			bitmapData.encode(new Rectangle(0, 0, 1024, 1024), new PNGEncoderOptions(), byteArray);
@@ -47,6 +47,7 @@ package
 			fileAccess.writeBytes(byteArray, 0, byteArray.length);
 			fileAccess.close();
 			
+			/*
 			var imageQueue:Vector.<BitmapImage> = _packer.imageQueue;
 			trace("test.length = " + imageQueue.length);
 			
@@ -61,6 +62,7 @@ package
 			}
 			fileAccess.writeUTFBytes("</TextureAtlas>");
 			fileAccess.close();
+			*/
 		}
 	}
 }
