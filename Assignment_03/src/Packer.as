@@ -5,8 +5,8 @@ package
 
 	public class Packer
 	{	
-		private const MaxWidth:int = 1024;
-		private const MaxHeight:int = 1024;
+		private const MaxWidth:int = 2048;
+		private const MaxHeight:int = 2048;
 		
 		private var _packedDataVector:Vector.<PackedData>;
 		
@@ -15,7 +15,6 @@ package
 		public function Packer()
 		{
 			_packedDataVector = new Vector.<PackedData>();
-			_dataQueue = new Vector.<BitmapImage>;
 		}
 
 		public function get packedDataVector():Vector.<PackedData>
@@ -30,12 +29,12 @@ package
 		 */		
 		public function goPacking(dataStack:Vector.<BitmapImage>):void
 		{
-			_dataQueue = dataStack.sort(compareFunc);
+			_dataQueue = dataStack.sort(orderPixels);
 			
 			startPacking();
 		}
 		
-		private function compareFunc(data1:BitmapImage, data2:BitmapImage):int
+		private function orderPixels(data1:BitmapImage, data2:BitmapImage):int
 		{
 			if(data1.pixels > data2.pixels) 
 			{ 
@@ -75,7 +74,6 @@ package
 			{
 				var bitmapImage:BitmapImage = _dataQueue.shift();
 				var nonFlag:Boolean = true;
-			//	trace(bitmapImage.name);
 				for(var i:int = 0; i < spaceArray.length; i++)
 				{
 					if(spaceArray[i].containsRect(new Rectangle(spaceArray[i].x, spaceArray[i].y, bitmapImage.bitmap.width, bitmapImage.bitmap.height)))
@@ -100,6 +98,7 @@ package
 						break;
 					}
 				}
+				
 				//추가하려는 이미지가  들어갈 수 있는 공간이 없을 경우
 				if(nonFlag)
 				{
@@ -122,12 +121,12 @@ package
 		 */		
 		private function searchIntersects(spaceArray:Vector.<Rectangle>, imageRect:Rectangle):void
 		{
-			for(var l:int = spaceArray.length-1; l >= 0; l--)
+			for(var i:int = spaceArray.length-1; i >= 0; i--)
 			{
-				if(spaceArray[l].intersects(imageRect))
+				if(spaceArray[i].intersects(imageRect))
 				{
-					var inter:Rectangle = spaceArray[l].intersection(imageRect);
-					var rect:Rectangle = spaceArray.removeAt(l);
+					var inter:Rectangle = spaceArray[i].intersection(imageRect);
+					var rect:Rectangle = spaceArray.removeAt(i);
 					
 					var leftRect:Rectangle = new Rectangle(rect.x, rect.y, (inter.x-rect.x), rect.height);
 					if(leftRect.width > 0 && leftRect.height > 0)
@@ -153,13 +152,13 @@ package
 		 */		
 		private function removeContains(spaceArray:Vector.<Rectangle>):void
 		{
-			for(var h:int = spaceArray.length-1; h >= 0; h--)
+			for(var i:int = spaceArray.length-1; i >= 0; i--)
 			{
-				for(var k:int = 0; k < spaceArray.length; k++)
+				for(var j:int = 0; j < spaceArray.length; j++)
 				{
-					if((spaceArray[k].containsRect(spaceArray[h])) && (h != k))
+					if((spaceArray[j].containsRect(spaceArray[i])) && (i != j))
 					{
-						spaceArray.removeAt(h);
+						spaceArray.removeAt(i);
 						break;
 					}
 				}
