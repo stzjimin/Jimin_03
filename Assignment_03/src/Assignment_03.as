@@ -2,12 +2,15 @@ package
 {
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.filesystem.File;
 
 	[SWF(width="1024", height="1024", frameRate="60", backgroundColor="#FFFFFF")]
 	public class Assignment_03 extends Sprite
 	{
 		private var _packer:Packer = new Packer();
 		private var _encoder:Encoder = new Encoder();
+		private var _file:File;
 		
 		/**
 		 *프로그램이 시작될 때 이미지파일들을 로딩 
@@ -15,7 +18,16 @@ package
 		 */		
 		public function Assignment_03()
 		{
-			new DataLoader("GUI_resources", completeDataLoad);
+			_file = new File();
+			_file.addEventListener(Event.SELECT, selectHandler);
+			_file.browseForDirectory("Select adirectory");
+		}
+		
+		private function selectHandler(event:Event):void
+		{
+			trace(_file.nativePath);
+			_file.removeEventListener(Event.SELECT, selectHandler);
+			new DataLoader(_file.nativePath, completeDataLoad);
 		}
 		
 		/**
