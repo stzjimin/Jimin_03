@@ -9,7 +9,7 @@ package
 	import flash.utils.getQualifiedClassName;
 
 	public class DataLoader
-	{
+	{	
 		private const appReg:RegExp = new RegExp(/app:\//);
 		
 		private static var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
@@ -18,6 +18,7 @@ package
 		private var _completeFunc:Function;
 		private var _assetLength:int;			//폴더내의 파일 개수
 		private var _assetCounter:int = 0;		//로드된 비트맵의 개수
+		private var _appURL:String;
 		
 		/**
 		 *데이타 로더는 폴더내부의 이미지들을 모두 받아옴(starling에 있는 AssetManager를 참고)
@@ -25,11 +26,13 @@ package
 		 * @param func = 반환하기위한 함수
 		 * 
 		 */		
-		public function DataLoader(libName:String, func:Function)
+		public function DataLoader(libName:String, completeFunc:Function)
 		{
 			_dataStack = new Vector.<BitmapImage>();
-			_completeFunc = func;
+			_completeFunc = completeFunc;
 			_libName = libName;
+			_appURL = "file:///" + _libName.replace(new RegExp(/\\/g),"/");
+			trace(libName);
 			
 			pushStack(File.applicationDirectory.resolvePath(_libName));
 		}
@@ -78,7 +81,7 @@ package
 		{
 			var fileName:String;
 			
-			fileName = rawAssetURL.replace(_libName+"/","");
+			fileName = rawAssetURL.replace(_appURL + "/","");
 			
 			return fileName;
 		}
@@ -90,7 +93,7 @@ package
 		 */		
 		private function uncaughtError(event:IOErrorEvent):void
 		{
-			trace("file name is fail!!");
+			trace("Please Check Directory's File!!");
 			event.currentTarget.removeEventListener(Event.COMPLETE, onCompleteLoad);
 			event.currentTarget.removeEventListener(IOErrorEvent.IO_ERROR, uncaughtError);
 			_assetCounter++;
@@ -103,7 +106,7 @@ package
 		 */		
 		private function onCompleteLoad(event:Event):void
 		{
-			var bitmapImage:BitmapImage = new BitmapImage(getName(event.currentTarget.url.replace(appReg,"")) ,event.currentTarget.loader.content as Bitmap);
+			var bitmapImage:BitmapImage = new BitmapImage(getName(event.currentTarget.url) ,event.currentTarget.loader.content as Bitmap);
 			_dataStack.push(bitmapImage);
 			event.currentTarget.removeEventListener(Event.COMPLETE, onCompleteLoad);
 			event.currentTarget.removeEventListener(IOErrorEvent.IO_ERROR, uncaughtError);

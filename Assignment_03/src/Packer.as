@@ -5,8 +5,8 @@ package
 
 	public class Packer
 	{	
-		private const MaxWidth:int = 2048;
-		private const MaxHeight:int = 2048;
+		private const MaxWidth:int = 1024;
+		private const MaxHeight:int = 1024;
 		
 		private var _packedDataVector:Vector.<PackedData>;
 		

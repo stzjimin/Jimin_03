@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas ImagePath="SpriteSheet_0.png">
+<SubTexture name="iu3" x="0" y="0" width="540" height="809"/>
+<SubTexture name="mario" x="540" y="0" width="405" height="175"/>
+<SubTexture name="piece13" x="540" y="175" width="225" height="225"/>
+<SubTexture name="apple" x="765" y="175" width="225" height="225"/>
+<SubTexture name="pika3" x="540" y="400" width="225" height="225"/>
+<SubTexture name="sim" x="765" y="400" width="225" height="225"/>
+<SubTexture name="piece18" x="540" y="625" width="289" height="175"/>
+<SubTexture name="iu2" x="540" y="800" width="282" height="179"/>
+<SubTexture name="piece19" x="0" y="809" width="290" height="174"/>
+<SubTexture name="pika2" x="290" y="809" width="241" height="209"/>
+<SubTexture name="piece21" x="829" y="625" width="187" height="269"/>
+<SubTexture name="19_1" x="822" y="894" width="100" height="98"/>
+<SubTexture name="80_80" x="922" y="894" width="80" height="80"/>
+<SubTexture name="piece6" x="945" y="0" width="65" height="64"/>
+<SubTexture name="piece28" x="945" y="64" width="45" height="45"/>
+<SubTexture name="piece25" x="945" y="109" width="39" height="39"/>
+<SubTexture name="piece26" x="984" y="109" width="39" height="38"/>
+<SubTexture name="revert" x="990" y="64" width="30" height="35"/>
+<SubTexture name="close" x="990" y="147" width="32" height="32"/>
+<SubTexture name="minimize" x="990" y="179" width="32" height="32"/>
+<SubTexture name="piece29" x="945" y="148" width="27" height="27"/>
+<SubTexture name="piece23" x="990" y="211" width="24" height="22"/>
+<SubTexture name="piece30" x="972" y="148" width="16" height="15"/>
+<SubTexture name="piece31" x="990" y="233" width="16" height="15"/>
+<SubTexture name="piece33" x="1006" y="233" width="16" height="15"/>
+<SubTexture name="piece32" x="990" y="248" width="16" height="15"/>
+<SubTexture name="piece27" x="1010" y="0" width="13" height="13"/>
+<SubTexture name="piece24" x="1010" y="13" width="8" height="8"/>
+</TextureAtlas>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas ImagePath="SpriteSheet_2.png">
+<SubTexture name="man" x="0" y="0" width="204" height="204"/>
+<SubTexture name="piece5" x="204" y="0" width="202" height="202"/>
+<SubTexture name="oris" x="406" y="0" width="180" height="180"/>
+<SubTexture name="piece22" x="406" y="180" width="540" height="302"/>
+</TextureAtlas>

@@ -13,17 +13,21 @@ package
 		private const binaryReg:RegExp = new RegExp("^10*$", "m");
 		private const fileReg:RegExp = new RegExp("(.png|.jpg|.jpeg)$", "m");
 		
+		private var _localPath:File;
+		private var _time:Number;
+		
 		public function Encoder()
 		{
 			
 		}
 		
 		public function startEncode(packedDataVector:Vector.<PackedData>):void
-		{	
+		{
+			_localPath = File.desktopDirectory.resolvePath(DataLoader.libName + "_SpriteSheet");
 			for(var i:int = 0; i < packedDataVector.length; i++)
 			{
-				getPngEncode(packedDataVector[i], DataLoader.libName + "_" + i);
-				getXmlEncode(packedDataVector[i].packedImageQueue, DataLoader.libName + "_" + i);
+				getPngEncode(packedDataVector[i], "SpriteSheet_" + i);
+				getXmlEncode(packedDataVector[i].packedImageQueue, "SpriteSheet_" + i);
 			}
 		}
 		
@@ -42,7 +46,7 @@ package
 			
 			bitmapData.encode(new Rectangle(0, 0, packedData.packedBitmapWidth, packedData.packedBitmapHeight), new PNGEncoderOptions(), byteArray);
 			
-			var localPngFile:File = File.documentsDirectory.resolvePath(fileName + ".png");
+			var localPngFile:File = _localPath.resolvePath(fileName + ".png");
 			var fileAccess:FileStream = new FileStream();
 			fileAccess.open(localPngFile, FileMode.WRITE);
 			fileAccess.writeBytes(byteArray, 0, byteArray.length);
@@ -51,7 +55,7 @@ package
 		
 		private function getXmlEncode(imageQueue:Vector.<BitmapImage>, fileName:String):void
 		{
-			var localXmlFile:File = File.documentsDirectory.resolvePath(fileName + ".xml");
+			var localXmlFile:File = _localPath.resolvePath(fileName + ".xml");
 			var fileAccess:FileStream = new FileStream();
 			fileAccess.open(localXmlFile, FileMode.WRITE);
 			fileAccess.writeUTFBytes("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
