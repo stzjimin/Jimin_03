@@ -10,7 +10,7 @@ package
 
 	public class Encoder
 	{
-		private const binaryReg:RegExp = new RegExp("^10+", "m");
+		private const binaryReg:RegExp = new RegExp("^10*$", "m");
 		private const fileReg:RegExp = new RegExp("(.png|.jpg|.jpeg)$", "m");
 		
 		public function Encoder()
@@ -26,17 +26,13 @@ package
 				var byteArray:ByteArray = new ByteArray();
 				
 				var binary:String = int(packedDataVector[i].packedBitmapWidth).toString(2);
-				if(binary.match(binaryReg))
-					packedDataVector[i].packedBitmapWidth = Math.pow(2,binary.length-1);
-				else
+				if(!binary.match(binaryReg))
 					packedDataVector[i].packedBitmapWidth = Math.pow(2,binary.length);
 				
 				binary = int(packedDataVector[i].packedBitmapHeight).toString(2);
-				if(binary.match(binaryReg))
-					packedDataVector[i].packedBitmapHeight = Math.pow(2,binary.length-1);
-				else
+				if(!binary.match(binaryReg))
 					packedDataVector[i].packedBitmapHeight = Math.pow(2,binary.length);
-				
+
 				bitmapData.encode(new Rectangle(0, 0, packedDataVector[i].packedBitmapWidth, packedDataVector[i].packedBitmapHeight), new PNGEncoderOptions(), byteArray);
 				
 				var localFile:File = File.documentsDirectory.resolvePath(DataLoader.libName + "_" + i + ".png");
@@ -54,8 +50,8 @@ package
 				fileAccess.writeUTFBytes("<TextureAtlas ImagePath=\"" + DataLoader.libName + "_" + i + ".png" + "\">\n");
 				while(imageQueue.length != 0)
 				{
-				var image:BitmapImage = imageQueue.shift();
-				fileAccess.writeUTFBytes("<SubTexture name=\"" + image.name.replace(fileReg,"") + "\" x=\"" + image.x + "\" y=\"" + image.y + "\" width=\"" + image.bitmap.width + "\" height=\"" + image.bitmap.height + "\"/>\n");
+					var image:BitmapImage = imageQueue.shift();
+					fileAccess.writeUTFBytes("<SubTexture name=\"" + image.name.replace(fileReg,"") + "\" x=\"" + image.x + "\" y=\"" + image.y + "\" width=\"" + image.bitmap.width + "\" height=\"" + image.bitmap.height + "\"/>\n");
 				}
 				fileAccess.writeUTFBytes("</TextureAtlas>");
 				fileAccess.close();

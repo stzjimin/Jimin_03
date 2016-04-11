@@ -10,7 +10,6 @@ package
 
 	public class DataLoader
 	{
-	//	private static const NAME_REGEX:RegExp = /([^\?\/\\]+?)(?:\.([\w\-]+))?(?:\?.*)?$/;
 		private const appReg:RegExp = new RegExp(/app:\//);
 		
 		private static var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
@@ -60,8 +59,6 @@ package
 					pushStack.apply(this, rawAsset["getDirectoryListing"]());
 				else if(getQualifiedClassName(rawAsset) == "flash.filesystem::File")
 				{
-				//	trace(decodeURI(rawAsset["url"]).replace(appReg,""));
-				//	var urlRequest:URLRequest = new URLRequest(decodeURI(rawAsset["url"]).substring(5,decodeURI(rawAsset["url"]).length));
 					var urlRequest:URLRequest = new URLRequest(decodeURI(rawAsset["url"]).replace(appReg,""));
 					var loader:Loader = new Loader();
 					loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onCompleteLoad);
@@ -93,7 +90,9 @@ package
 		 */		
 		private function uncaughtError(event:IOErrorEvent):void
 		{
-			trace("Please Check Files!!!");
+			event.currentTarget.removeEventListener(Event.COMPLETE, onCompleteLoad);
+			event.currentTarget.removeEventListener(IOErrorEvent.IO_ERROR, uncaughtError);
+			_assetCounter++;
 		}
 		
 		/**

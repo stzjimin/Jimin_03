@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas ImagePath="GUI_resources_0.png">
+<SubTexture name="ex" x="0" y="0" width="640" height="480"/>
+<SubTexture name="piece22" x="0" y="480" width="540" height="302"/>
+<SubTexture name="400_400" x="540" y="480" width="400" height="400"/>
+<SubTexture name="mario" x="0" y="782" width="405" height="175"/>
+<SubTexture name="piece13" x="640" y="0" width="225" height="225"/>
+<SubTexture name="pika3" x="640" y="225" width="225" height="225"/>
+<SubTexture name="piece11" x="865" y="0" width="140" height="140"/>
+<SubTexture name="titleBar" x="405" y="880" width="512" height="32"/>
+<SubTexture name="19_1" x="865" y="140" width="100" height="98"/>
+<SubTexture name="80_80" x="940" y="238" width="80" height="80"/>
+<SubTexture name="8080_1" x="940" y="318" width="80" height="80"/>
+<SubTexture name="piece3" x="865" y="398" width="80" height="76"/>
+<SubTexture name="piece7" x="940" y="474" width="80" height="73"/>
+<SubTexture name="piece2" x="940" y="547" width="80" height="71"/>
+<SubTexture name="piece10" x="940" y="618" width="80" height="71"/>
+<SubTexture name="piece9" x="940" y="689" width="80" height="71"/>
+<SubTexture name="piece8" x="940" y="760" width="80" height="71"/>
+<SubTexture name="piece6" x="865" y="238" width="65" height="64"/>
+<SubTexture name="piece28" x="965" y="140" width="45" height="45"/>
+<SubTexture name="piece25" x="965" y="185" width="39" height="39"/>
+<SubTexture name="piece26" x="865" y="302" width="39" height="38"/>
+<SubTexture name="revert" x="904" y="302" width="30" height="35"/>
+<SubTexture name="minimize" x="904" y="337" width="32" height="32"/>
+<SubTexture name="close" x="865" y="340" width="32" height="32"/>
+<SubTexture name="piece29" x="897" y="369" width="27" height="27"/>
+<SubTexture name="piece23" x="865" y="372" width="24" height="22"/>
+<SubTexture name="piece32" x="1005" y="0" width="16" height="15"/>
+<SubTexture name="piece31" x="1005" y="15" width="16" height="15"/>
+<SubTexture name="piece33" x="1005" y="30" width="16" height="15"/>
+<SubTexture name="piece30" x="1005" y="45" width="16" height="15"/>
+<SubTexture name="piece27" x="1005" y="60" width="13" height="13"/>
+<SubTexture name="piece24" x="1005" y="73" width="8" height="8"/>
+</TextureAtlas>

@@ -11,8 +11,6 @@ package
 		private var _packedDataVector:Vector.<PackedData>;
 		
 		private var _dataQueue:Vector.<BitmapImage>;
-		private var _packedBitmapDataWidth:int;
-		private var _packedBitmapDataHeight:int;
 		
 		public function Packer()
 		{
@@ -25,16 +23,6 @@ package
 			return _packedDataVector;
 		}
 
-		public function get packedBitmapDataHeight():int
-		{
-			return _packedBitmapDataHeight;
-		}
-
-		public function get packedBitmapDataWidth():int
-		{
-			return _packedBitmapDataWidth;
-		}
-
 		/**
 		 *비트맵데이터들을 하나의 비트맵데이터로 합치기 위한 함수 
 		 * @param dataStack = 비트맵데이터가 들어있는 스택
@@ -42,13 +30,12 @@ package
 		 */		
 		public function goPacking(dataStack:Vector.<BitmapImage>):void
 		{
-			_dataQueue = dataStack.sort(comparleFunc);
-		//	_packedDataVector = packedDataVector;
+			_dataQueue = dataStack.sort(compareFunc);
 			
 			startPacking();
 		}
 		
-		private function comparleFunc(data1:BitmapImage, data2:BitmapImage):int
+		private function compareFunc(data1:BitmapImage, data2:BitmapImage):int
 		{
 			if(data1.pixels > data2.pixels) 
 			{ 
@@ -75,30 +62,29 @@ package
 			_packedDataVector.push(currentPackedData);
 			
 			var count:int = 0;
-			var rectArray:Vector.<Rectangle> = new Vector.<Rectangle>();
+			var spaceArray:Vector.<Rectangle> = new Vector.<Rectangle>();
 			var mult:uint = 0xFF;
 			var bitmapWidth:int = 0;
 			var bitmapHeight:int = 0;
 			currentPackedData.packedBitmapWidth = _dataQueue[_dataQueue.length-1].bitmap.width;
 			currentPackedData.packedBitmapHeight = _dataQueue[_dataQueue.length-1].bitmap.height;
 			var first_rect:Rectangle = new Rectangle(0, 0, currentPackedData.packedBitmapData.width, currentPackedData.packedBitmapData.height);
-			rectArray.push(first_rect);
+			spaceArray.push(first_rect);
 			
 			while(_dataQueue.length != 0)
 			{
 				var bitmapImage:BitmapImage = _dataQueue.shift();
-				var vecArrayTemp:Vector.<Rectangle> = new Vector.<Rectangle>();
 				var nonFlag:Boolean = true;
-				trace(bitmapImage.name);
-				for(var i:int = 0; i < rectArray.length; i++)
+			//	trace(bitmapImage.name);
+				for(var i:int = 0; i < spaceArray.length; i++)
 				{
-					if(rectArray[i].containsRect(new Rectangle(rectArray[i].x, rectArray[i].y, bitmapImage.bitmap.width, bitmapImage.bitmap.height)))
+					if(spaceArray[i].containsRect(new Rectangle(spaceArray[i].x, spaceArray[i].y, bitmapImage.bitmap.width, bitmapImage.bitmap.height)))
 					{
-						var point:Point = new Point(rectArray[i].x, rectArray[i].y);
+						var point:Point = new Point(spaceArray[i].x, spaceArray[i].y);
 						var imageRect:Rectangle = bitmapImage.bitmap.bitmapData.rect;
 						
-						bitmapImage.x = imageRect.x = rectArray[i].x;
-						bitmapImage.y = imageRect.y = rectArray[i].y;
+						bitmapImage.x = imageRect.x = spaceArray[i].x;
+						bitmapImage.y = imageRect.y = spaceArray[i].y;
 						
 						currentPackedData.packedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, point, mult,mult,mult,mult);
 						currentPackedData.packedImageQueue.push(bitmapImage);
@@ -108,55 +94,108 @@ package
 							currentPackedData.packedBitmapHeight = bitmapImage.y+bitmapImage.bitmap.height;
 						
 						//이미지와 겹쳐지는 공간이 있다면 해당 공간을 분할
-						for(var l:int = rectArray.length-1; l >= 0; l--)
-						{
-							if(rectArray[l].intersects(imageRect))
-							{
-								var inter:Rectangle = rectArray[l].intersection(imageRect);
-								var rect:Rectangle = rectArray.removeAt(l);
-								
-								var rightRect:Rectangle = new Rectangle((inter.x+inter.width), rect.y, (rect.x+rect.width-(inter.x+inter.width)), rect.height);
-								if(rightRect.width > 0 && rightRect.height > 0)
-									vecArrayTemp.push(rightRect);
-								var leftRect:Rectangle = new Rectangle(rect.x, rect.y, (inter.x-rect.x), rect.height);
-								if(leftRect.width > 0 && leftRect.height > 0)
-									vecArrayTemp.push(leftRect);
-								var bottomRect:Rectangle = new Rectangle(rect.x, (inter.y+inter.height), rect.width, (rect.y+rect.height-(inter.y+inter.height)));
-								if(bottomRect.width > 0 && bottomRect.height > 0)
-									vecArrayTemp.push(bottomRect);
-								var topRect:Rectangle = new Rectangle(rect.x, rect.y, rect.width, (inter.y-rect.y));
-								if(topRect.width > 0 && topRect.height > 0)
-									vecArrayTemp.push(topRect);
-							}
-						}
+						searchIntersects(spaceArray, imageRect);
+						
 						nonFlag = false;
 						break;
 					}
 				}
-				
+				//추가하려는 이미지가  들어갈 수 있는 공간이 없을 경우
 				if(nonFlag)
 				{
 					count++;
 					_dataQueue.push(bitmapImage);
 					if(_dataQueue.length <= count)
 						startPacking.apply(this);
+					continue;
 				}
 				
-				//분할된 공간들 중 다른 공간에 포함이되는 공간이 있다면 해당 공간은 삭제 시켜준다
-				rectArray =	rectArray.concat(vecArrayTemp);
-
-				for(var h:int = rectArray.length-1; h >= 0; h--)
+				spaceArray.sort(orderYvalue);	//여유공간을  y값으로 정렬하여 상대적으로 아래쪽에 있는 공간은 나중에 선택이 되도록 합니다
+			}
+		}
+		
+		/**
+		 *공간들 중 이미지와 겹쳐지는 공간을 찾아내서 해당공간을 분할하는 함수입니다
+		 * @param spaceArray = 남아있는공간
+		 * @param imageRect = 추가되는 이미지가 차지하는 자리
+		 * 자리를 찾아서 추가되는 이미지가 차지하는 공간과 기존의 여유공간들이 겹쳐지는지를 조사한 후 겹쳐진다면 겹쳐지는 공간을 토대로 해당 여유공간을 분할합니다
+		 */		
+		private function searchIntersects(spaceArray:Vector.<Rectangle>, imageRect:Rectangle):void
+		{
+			for(var l:int = spaceArray.length-1; l >= 0; l--)
+			{
+				if(spaceArray[l].intersects(imageRect))
 				{
-					for(var k:int = 0; k < rectArray.length; k++)
-					{
-						if((rectArray[k].containsRect(rectArray[h])) && (h != k))
-						{
-							rectArray.removeAt(h);
-							break;
-						}
-					}
+					var inter:Rectangle = spaceArray[l].intersection(imageRect);
+					var rect:Rectangle = spaceArray.removeAt(l);
+					
+					var leftRect:Rectangle = new Rectangle(rect.x, rect.y, (inter.x-rect.x), rect.height);
+					if(leftRect.width > 0 && leftRect.height > 0)
+						spaceArray.push(leftRect);
+					var rightRect:Rectangle = new Rectangle((inter.x+inter.width), rect.y, (rect.x+rect.width-(inter.x+inter.width)), rect.height);
+					if(rightRect.width > 0 && rightRect.height > 0)
+						spaceArray.push(rightRect);
+					var bottomRect:Rectangle = new Rectangle(rect.x, (inter.y+inter.height), rect.width, (rect.y+rect.height-(inter.y+inter.height)));
+					if(bottomRect.width > 0 && bottomRect.height > 0)
+						spaceArray.push(bottomRect);
+					var topRect:Rectangle = new Rectangle(rect.x, rect.y, rect.width, (inter.y-rect.y));
+					if(topRect.width > 0 && topRect.height > 0)
+						spaceArray.push(topRect);
 				}
 			}
+			removeContains(spaceArray);
+		}
+		
+		/**
+		 *여유공간들 중 다른공간에 완전히 포함이되는 공간을 제거하는 함수입니다
+		 * @param spaceArray = 남아있는 여유공간을 가진 배열
+		 * 
+		 */		
+		private function removeContains(spaceArray:Vector.<Rectangle>):void
+		{
+			for(var h:int = spaceArray.length-1; h >= 0; h--)
+			{
+				for(var k:int = 0; k < spaceArray.length; k++)
+				{
+					if((spaceArray[k].containsRect(spaceArray[h])) && (h != k))
+					{
+						spaceArray.removeAt(h);
+						break;
+					}
+				}
+			}	
+		}
+		
+		private function orderXvalue(space1:Rectangle, space2:Rectangle):int
+		{
+			if(space1.x < space2.x) 
+			{ 
+				return -1;
+			} 
+			else if(space1.x > space2.x)
+			{ 
+				return 1; 
+			} 
+			else 
+			{ 
+				return 0; 
+			} 
+		}
+		
+		private function orderYvalue(space1:Rectangle, space2:Rectangle):int
+		{
+			if(space1.y < space2.y) 
+			{ 
+				return -1;
+			} 
+			else if(space1.y > space2.y)
+			{ 
+				return 1; 
+			} 
+			else 
+			{ 
+				return 0; 
+			} 
 		}
 	}
 }
