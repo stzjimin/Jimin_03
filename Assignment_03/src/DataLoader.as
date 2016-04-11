@@ -18,7 +18,7 @@ package
 		private var _completeFunc:Function;
 		private var _assetLength:int;			//폴더내의 파일 개수
 		private var _assetCounter:int = 0;		//로드된 비트맵의 개수
-		private var _appURL:String;
+		private var _fileURL:String;
 		
 		/**
 		 *데이타 로더는 폴더내부의 이미지들을 모두 받아옴(starling에 있는 AssetManager를 참고)
@@ -31,7 +31,7 @@ package
 			_dataStack = new Vector.<BitmapImage>();
 			_completeFunc = completeFunc;
 			_libName = libName;
-			_appURL = "file:///" + _libName.replace(new RegExp(/\\/g),"/");
+			_fileURL = "file:///" + _libName.replace(new RegExp(/\\/g),"/");
 			trace(libName);
 			
 			pushStack(File.applicationDirectory.resolvePath(_libName));
@@ -81,7 +81,7 @@ package
 		{
 			var fileName:String;
 			
-			fileName = rawAssetURL.replace(_appURL + "/","");
+			fileName = rawAssetURL.replace(_fileURL + "/","");
 			
 			return fileName;
 		}
