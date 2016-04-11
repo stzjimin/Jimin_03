@@ -9,12 +9,19 @@ package
 		private const MaxHeight:int = 1024;
 		
 		private var _packedDataVector:Vector.<PackedData>;
-		
 		private var _dataQueue:Vector.<BitmapImage>;
+		private var _changeFunc:Function;
+		private var _endFlag:Boolean;
 		
-		public function Packer()
+		private var _count:int;
+		private var _spaceArray:Vector.<Rectangle>;
+		private var _currentPackedData:PackedData;
+		
+		public function Packer(changeFunc:Function, endFlag:Boolean)
 		{
 			_packedDataVector = new Vector.<PackedData>();
+			_changeFunc = changeFunc;
+			_endFlag = endFlag;
 		}
 
 		public function get packedDataVector():Vector.<PackedData>
@@ -27,11 +34,12 @@ package
 		 * @param dataStack = 비트맵데이터가 들어있는 스택
 		 * 합치기전에 높이순으로 정렬한 후 시작
 		 */		
-		public function goPacking(dataStack:Vector.<BitmapImage>):void
+		public function setPacking(dataStack:Vector.<BitmapImage>):void
 		{
 			_dataQueue = dataStack.sort(orderPixels);
 			
-			startPacking();
+			setPackedData();
+		//	threadPack();
 		}
 		
 		private function orderPixels(data1:BitmapImage, data2:BitmapImage):int
@@ -50,67 +58,79 @@ package
 			} 
 		}
 		
-		/**
-		 *Maxrect알고리즘을 이용한 패킹함수
-		 * 각 이미지들이 여유공간을 찾아간 후 해당 이미지와 겹쳐지는 여유공간은 다시 겹쳐지는 부분을 기준으로 분할하는 방법
-		 * NOTE @구현방식에 문제가 있는지 속도가 생각만큼 나오지는 않습니다
-		 */		
-		private function startPacking():void
+		public function threadPack():void
+		{
+			while(_dataQueue.length != 0)
+			{
+				addImage();
+			}
+		}
+		
+		public function setPackedData():void
 		{
 			var currentPackedData:PackedData = new PackedData(MaxWidth, MaxHeight);
 			_packedDataVector.push(currentPackedData);
 			
-			var count:int = 0;
-			var spaceArray:Vector.<Rectangle> = new Vector.<Rectangle>();
-			var mult:uint = 0xFF;
-			var bitmapWidth:int = 0;
-			var bitmapHeight:int = 0;
+			_count = 0;
+			_spaceArray = new Vector.<Rectangle>();
 			currentPackedData.packedBitmapWidth = _dataQueue[_dataQueue.length-1].bitmap.width;
 			currentPackedData.packedBitmapHeight = _dataQueue[_dataQueue.length-1].bitmap.height;
-			var first_rect:Rectangle = new Rectangle(0, 0, currentPackedData.packedBitmapData.width, currentPackedData.packedBitmapData.height);
-			spaceArray.push(first_rect);
+			var firstRect:Rectangle = new Rectangle(0, 0, currentPackedData.packedBitmapData.width, currentPackedData.packedBitmapData.height);
 			
-			while(_dataQueue.length != 0)
+			_spaceArray.push(firstRect);
+			_currentPackedData = _packedDataVector[_packedDataVector.length-1];
+		}
+		
+		public function addImage():BitmapImage
+		{
+
+			var bitmapImage:BitmapImage = _dataQueue.shift();
+			if(bitmapImage == null)
 			{
-				var bitmapImage:BitmapImage = _dataQueue.shift();
-				var nonFlag:Boolean = true;
-				for(var i:int = 0; i < spaceArray.length; i++)
-				{
-					if(spaceArray[i].containsRect(new Rectangle(spaceArray[i].x, spaceArray[i].y, bitmapImage.bitmap.width, bitmapImage.bitmap.height)))
-					{
-						var point:Point = new Point(spaceArray[i].x, spaceArray[i].y);
-						var imageRect:Rectangle = bitmapImage.bitmap.bitmapData.rect;
-						
-						bitmapImage.x = imageRect.x = spaceArray[i].x;
-						bitmapImage.y = imageRect.y = spaceArray[i].y;
-						
-						currentPackedData.packedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, point, mult,mult,mult,mult);
-						currentPackedData.packedImageQueue.push(bitmapImage);
-						if(currentPackedData.packedBitmapWidth < bitmapImage.x+bitmapImage.bitmap.width)
-							currentPackedData.packedBitmapWidth = bitmapImage.x+bitmapImage.bitmap.width;
-						if(currentPackedData.packedBitmapHeight < bitmapImage.y+bitmapImage.bitmap.height)
-							currentPackedData.packedBitmapHeight = bitmapImage.y+bitmapImage.bitmap.height;
-						
-						//이미지와 겹쳐지는 공간이 있다면 해당 공간을 분할
-						searchIntersects(spaceArray, imageRect);
-						
-						nonFlag = false;
-						break;
-					}
-				}
-				
-				//추가하려는 이미지가  들어갈 수 있는 공간이 없을 경우
-				if(nonFlag)
-				{
-					count++;
-					_dataQueue.push(bitmapImage);
-					if(_dataQueue.length <= count)
-						startPacking.apply(this);
-					continue;
-				}
-				
-				spaceArray.sort(orderYvalue);	//여유공간을  y값으로 정렬하여 상대적으로 아래쪽에 있는 공간은 나중에 선택이 되도록 합니다
+				_endFlag = true;
+				return null;
 			}
+			var nonFlag:Boolean = true;
+			for(var i:int = 0; i < _spaceArray.length; i++)
+			{
+				if(_spaceArray[i].containsRect(new Rectangle(_spaceArray[i].x, _spaceArray[i].y, bitmapImage.bitmap.width, bitmapImage.bitmap.height)))
+				{
+					var point:Point = new Point(_spaceArray[i].x, _spaceArray[i].y);
+					var imageRect:Rectangle = bitmapImage.bitmap.bitmapData.rect;
+					
+					bitmapImage.x = imageRect.x = _spaceArray[i].x;
+					bitmapImage.y = imageRect.y = _spaceArray[i].y;
+					
+					_currentPackedData.packedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, point, 0xFF,0xFF,0xFF,0xFF);
+					_currentPackedData.packedImageQueue.push(bitmapImage);
+					if(_currentPackedData.packedBitmapWidth < bitmapImage.x+bitmapImage.bitmap.width)
+						_currentPackedData.packedBitmapWidth = bitmapImage.x+bitmapImage.bitmap.width;
+					if(_currentPackedData.packedBitmapHeight < bitmapImage.y+bitmapImage.bitmap.height)
+						_currentPackedData.packedBitmapHeight = bitmapImage.y+bitmapImage.bitmap.height;
+					
+					//이미지와 겹쳐지는 공간이 있다면 해당 공간을 분할
+					searchIntersects(_spaceArray, imageRect);
+					
+					nonFlag = false;
+					break;
+				}
+			}
+			
+			//추가하려는 이미지가  들어갈 수 있는 공간이 없을 경우
+			if(nonFlag)
+			{
+				_count++;
+				_dataQueue.push(bitmapImage);
+				if(_dataQueue.length <= _count)
+				{
+					_changeFunc();
+					setPackedData();
+				}
+				return null;
+			}
+			
+			_spaceArray.sort(orderYvalue);	//여유공간을  y값으로 정렬하여 상대적으로 아래쪽에 있는 공간은 나중에 선택이 되도록 합니다
+			return bitmapImage;
 		}
 		
 		/**
