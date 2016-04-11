@@ -15,20 +15,40 @@ package
 		
 		private var _localPath:File;
 		private var _time:Number;
+		private var _count:int;
 		
 		public function Encoder()
 		{
 			
 		}
 		
-		public function startEncode(packedDataVector:Vector.<PackedData>):void
+		public function setEncode():void
 		{
 			_localPath = File.desktopDirectory.resolvePath(DataLoader.libName + "_SpriteSheet");
-			for(var i:int = 0; i < packedDataVector.length; i++)
+			_count = 0;
+		}
+		
+		public function encodeFromVector(packedDataVector:Vector.<PackedData>):void
+		{
+			for(var i:int = _count; i < packedDataVector.length; i++)
+				encodeFromData(packedDataVector[i]);
+		}
+		
+		public function encodeFromDisplay(packedDataVector:Vector.<PackedData>):Boolean
+		{
+			if(packedDataVector.length > _count)
 			{
-				getPngEncode(packedDataVector[i], "SpriteSheet_" + i);
-				getXmlEncode(packedDataVector[i].packedImageQueue, "SpriteSheet_" + i);
+				encodeFromData(packedDataVector[packedDataVector.length - 1]);
+				return true;
 			}
+			return false;
+		}
+		
+		private function encodeFromData(packedData:PackedData):void
+		{
+			getPngEncode(packedData, "SpriteSheet_" + _count);
+			getXmlEncode(packedData.packedImageQueue, "SpriteSheet_" + _count);
+			_count++;
 		}
 		
 		private function getPngEncode(packedData:PackedData, fileName:String):void

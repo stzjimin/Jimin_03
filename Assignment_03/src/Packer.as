@@ -10,25 +10,24 @@ package
 		
 		private var _packedDataVector:Vector.<PackedData>;
 		private var _dataQueue:Vector.<BitmapImage>;
+
 		private var _changeFunc:Function;
-		private var _endFlag:Boolean;
 		
 		private var _count:int;
 		private var _spaceArray:Vector.<Rectangle>;
 		private var _currentPackedData:PackedData;
 		
-		public function Packer(changeFunc:Function, endFlag:Boolean)
+		public function Packer(changeFunc:Function)
 		{
 			_packedDataVector = new Vector.<PackedData>();
 			_changeFunc = changeFunc;
-			_endFlag = endFlag;
 		}
 
 		public function get packedDataVector():Vector.<PackedData>
 		{
 			return _packedDataVector;
 		}
-
+		
 		/**
 		 *비트맵데이터들을 하나의 비트맵데이터로 합치기 위한 함수 
 		 * @param dataStack = 비트맵데이터가 들어있는 스택
@@ -37,8 +36,6 @@ package
 		public function setPacking(dataStack:Vector.<BitmapImage>):void
 		{
 			_dataQueue = dataStack.sort(orderPixels);
-			
-			setPackedData();
 		//	threadPack();
 		}
 		
@@ -83,13 +80,8 @@ package
 		
 		public function addImage():BitmapImage
 		{
-
 			var bitmapImage:BitmapImage = _dataQueue.shift();
-			if(bitmapImage == null)
-			{
-				_endFlag = true;
-				return null;
-			}
+			trace(bitmapImage);
 			var nonFlag:Boolean = true;
 			for(var i:int = 0; i < _spaceArray.length; i++)
 			{

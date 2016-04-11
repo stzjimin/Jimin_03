@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TextureAtlas ImagePath="SpriteSheet_2.png">
-<SubTexture name="man" x="0" y="0" width="204" height="204"/>
-<SubTexture name="piece5" x="204" y="0" width="202" height="202"/>
-<SubTexture name="oris" x="406" y="0" width="180" height="180"/>
-<SubTexture name="piece22" x="406" y="180" width="540" height="302"/>
+<SubTexture name="pika2" x="0" y="0" width="241" height="209"/>
+<SubTexture name="iu" x="241" y="0" width="209" height="241"/>
+<SubTexture name="light" x="450" y="0" width="286" height="176"/>
+<SubTexture name="piece4" x="736" y="0" width="275" height="183"/>
+<SubTexture name="piece21" x="450" y="176" width="187" height="269"/>
+<SubTexture name="piece12" x="637" y="183" width="281" height="179"/>
+<SubTexture name="hulk" x="0" y="209" width="202" height="249"/>
+<SubTexture name="iu4" x="637" y="362" width="284" height="177"/>
+<SubTexture name="iu5" x="202" y="445" width="301" height="167"/>
+<SubTexture name="piece17" x="0" y="458" width="194" height="259"/>
+<SubTexture name="piece20" x="503" y="539" width="224" height="224"/>
+<SubTexture name="19" x="727" y="539" width="230" height="218"/>
+<SubTexture name="piece16" x="202" y="241" width="204" height="204"/>
 </TextureAtlas>
