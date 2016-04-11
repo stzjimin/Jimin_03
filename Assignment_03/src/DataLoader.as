@@ -90,6 +90,7 @@ package
 		 */		
 		private function uncaughtError(event:IOErrorEvent):void
 		{
+			trace("file name is fail!!");
 			event.currentTarget.removeEventListener(Event.COMPLETE, onCompleteLoad);
 			event.currentTarget.removeEventListener(IOErrorEvent.IO_ERROR, uncaughtError);
 			_assetCounter++;
