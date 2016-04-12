@@ -13,10 +13,10 @@ package
 		private const appReg:RegExp = new RegExp(/app:\//);
 		
 		private static var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
-		private static var _libName:String;
+		private var _libName:String;
 		
 		private var _completeFunc:Function;
-		private var _assetLength:int = 0;			//폴더내의 파일 개수
+		private var _assetLength:int = 1;			//폴더내의 파일 개수
 		private var _assetCounter:int = 0;		//로드된 비트맵의 개수
 		private var _fileURL:String;
 		
@@ -26,18 +26,20 @@ package
 		 * @param func = 반환하기위한 함수
 		 * 
 		 */		
-		public function DataLoader(libName:String, completeFunc:Function)
+		public function DataLoader(completeFunc:Function)
 		{
 			_dataStack = new Vector.<BitmapImage>();
 			_completeFunc = completeFunc;
+		}
+		
+		public function loadData(libName:String):void
+		{
 			_libName = libName;
 			_fileURL = "file:///" + _libName.replace(new RegExp(/\\/g),"/");
-			trace(libName);
-			
 			pushStack(File.applicationDirectory.resolvePath(_libName));
 		}
 		
-		public static function get libName():String
+		public function get libName():String
 		{
 			return _libName;
 		}
@@ -56,6 +58,7 @@ package
 		{
 			if(!rawAssets["isDirectory"])
 				_assetLength = _assetLength + rawAssets.length - 1;
+			trace(_assetLength);
 			for each(var rawAsset:Object in rawAssets)
 			{
 				if(rawAsset["isDirectory"])

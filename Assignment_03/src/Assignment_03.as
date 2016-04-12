@@ -1,6 +1,7 @@
 package
 {
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -15,19 +16,23 @@ package
 	{
 		private var _packer:Packer;
 		private var _encoder:Encoder = new Encoder();
+		private var _dataLoader:DataLoader;
 		private var _file:File;
 		private var _progressText:TextField = new TextField();
 		private var _time:Number;
+		
 		private var _imageAddButton:SimpleButton;
 		private var _encodeButton:SimpleButton;
 		private var _autoPackButton:SimpleButton;
+		private var _packedImageUpButton:SimpleButton;
+		private var _packedImageDownButton:SimpleButton;
+		
 		private var _backGround:Sprite;
 		private var _currentBitmapImage:BitmapImage
 		private var _currentCanvas:Sprite;
 		private var _currentCanvasCount:int = 0;
 		private var _maxCanvasCount:int = 0;
-		private var _packedImageUpButton:SimpleButton;
-		private var _packedImageDownButton:SimpleButton;
+		
 		private var _packFlag:Boolean = false;
 		
 		/**
@@ -48,13 +53,14 @@ package
 			addChild(_progressText);
 			_backGround = new Sprite();
 			_backGround.y = 30;
+			_dataLoader = new DataLoader(completeDataLoad);
 		}
 		
 		private function onClickSelectButton(event:Event):void
 		{
 			_progressText.text = "로딩중!!";
 			_file.removeEventListener(Event.SELECT, onClickSelectButton);
-			new DataLoader(_file.nativePath, completeDataLoad);
+			_dataLoader.loadData(_file.nativePath);
 		}
 		
 		/**
@@ -320,6 +326,7 @@ package
 			_backGround.addChild(canvas);
 			packedData.packedBitmapWidth = _currentCanvas.width;
 			packedData.packedBitmapHeight = _currentCanvas.height;
+			
 			_currentCanvas = canvas;
 			_currentCanvasCount++;
 			_maxCanvasCount = _currentCanvasCount;
