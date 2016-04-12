@@ -13,7 +13,7 @@ package
 		private const appReg:RegExp = new RegExp(/app:\//);
 		
 		private static var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
-		private var _libName:String;
+		private static var _libName:String;
 		
 		private var _completeFunc:Function;
 		private var _assetLength:int = 1;			//폴더내의 파일 개수
@@ -26,20 +26,17 @@ package
 		 * @param func = 반환하기위한 함수
 		 * 
 		 */		
-		public function DataLoader(completeFunc:Function)
+		public function DataLoader(libName:String, completeFunc:Function)
 		{
 			_dataStack = new Vector.<BitmapImage>();
 			_completeFunc = completeFunc;
-		}
-		
-		public function loadData(libName:String):void
-		{
+			
 			_libName = libName;
 			_fileURL = "file:///" + _libName.replace(new RegExp(/\\/g),"/");
 			pushStack(File.applicationDirectory.resolvePath(_libName));
 		}
 		
-		public function get libName():String
+		public static function get libName():String
 		{
 			return _libName;
 		}
@@ -115,7 +112,7 @@ package
 			event.currentTarget.removeEventListener(IOErrorEvent.IO_ERROR, uncaughtError);
 			_assetCounter++;
 			
-			if(_assetCounter == _assetLength)
+			if(_assetCounter >= _assetLength)
 				_completeFunc();
 		}
 	}

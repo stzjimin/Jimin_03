@@ -29,17 +29,15 @@ package
 		 */		
 		public function setEncode():void
 		{
-		//	_localPath = File.desktopDirectory.resolvePath(DataLoader.libName + "_SpriteSheet");
-			_localPath = File.documentsDirectory.resolvePath("SpriteSheet");
+			_localPath = File.desktopDirectory.resolvePath(DataLoader.libName + "_SpriteSheet");
+		//	_localPath = File.documentsDirectory.resolvePath("SpriteSheet");
 			_count = 0;
 		}
 		
-		/*
-		public function setEncodeDirectory():void
+		public function setEncodeDirectory(path:String):void
 		{
-			
+			_localPath = File.desktopDirectory.resolvePath(path);
 		}
-		*/
 		
 		/**
 		 *인자로 입력받은 PackedData를 사용하여 png파일과 xml파일을 만드는 함수입니다. 

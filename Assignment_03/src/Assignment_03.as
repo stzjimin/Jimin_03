@@ -15,7 +15,6 @@ package
 	{
 		private var _packer:Packer;
 		private var _encoder:Encoder = new Encoder();
-		private var _dataLoader:DataLoader;
 		private var _file:File;
 		private var _progressText:TextField = new TextField();
 		private var _time:Number;
@@ -25,6 +24,8 @@ package
 		private var _autoPackButton:SimpleButton;
 		private var _packedImageUpButton:SimpleButton;
 		private var _packedImageDownButton:SimpleButton;
+		private var _selectInputDirectoryButton:SimpleButton;
+		private var _selectOutputDirectoryButton:SimpleButton;
 		
 		private var _backGround:Sprite;
 		private var _currentBitmapImage:BitmapImage
@@ -41,10 +42,6 @@ package
 		 */		
 		public function Assignment_03()
 		{
-			_file = new File();
-			_file = File.applicationDirectory;
-			_file.addEventListener(Event.SELECT, onClickSelectButton);
-			_file.browseForDirectory("우측하단의 폴더선택을 눌러주세요!!");
 			_progressText.x = 430;
 			_progressText.y = 450;
 			_progressText.width = 150;
@@ -53,24 +50,27 @@ package
 			addChild(_progressText);
 			_backGround = new Sprite();
 			_backGround.y = 30;
-			_dataLoader = new DataLoader(completeDataLoad);
-		}
-		
-		private function onClickSelectButton(event:Event):void
-		{
-			_progressText.text = "로딩중!!";
-			_file.removeEventListener(Event.SELECT, onClickSelectButton);
-			_dataLoader.loadData(_file.nativePath);
-		}
-		
-		/**
-		 *로딩이 완료될 경우 Packer클래스에서 해당 데이타들을 패킹을 해준 후 화면에 출력
-		 * imageQueue는 화면에 출력된 순서대로 BitmapImage객체들이 저장되어있는 큐
-		 * 
-		 */		
-		private function completeDataLoad():void
-		{
-			this.removeChild(_progressText);
+			
+			//이미지폴더 선택 버튼---------------------------------
+			var inputButtonUpState:TextField = new TextField();
+			inputButtonUpState.text = "  입력폴더 선택";
+			inputButtonUpState.border = true;
+			inputButtonUpState.height = 20;
+			inputButtonUpState.width = 120;
+			inputButtonUpState.background = true;
+			inputButtonUpState.backgroundColor = 0xFFFFF0;
+			
+			var inputButtonDownState:TextField = new TextField();
+			inputButtonDownState.text = "Go!!";
+			inputButtonDownState.border = true;
+			inputButtonDownState.height = 20;
+			inputButtonDownState.width = 120;
+			
+			_selectInputDirectoryButton = new SimpleButton(inputButtonUpState, inputButtonUpState, inputButtonDownState, inputButtonDownState);
+			_selectInputDirectoryButton.addEventListener(MouseEvent.CLICK, onClickInputButton);
+			_selectInputDirectoryButton.x = 430;
+			_selectInputDirectoryButton.y = 480;
+			//-------------------------------------------
 			
 			//이미지 추가 버튼---------------------------------
 			var addButtonUpState:TextField = new TextField();
@@ -91,6 +91,26 @@ package
 			_imageAddButton.addEventListener(MouseEvent.CLICK, onClickAddButton);
 			//-------------------------------------------
 			
+			//출력폴더 선택 버튼---------------------------------
+			var outputButtonUpState:TextField = new TextField();
+			outputButtonUpState.text = "출력폴더 선택";
+			outputButtonUpState.border = true;
+			outputButtonUpState.height = 20;
+			outputButtonUpState.width = 100;
+			outputButtonUpState.background = true;
+			outputButtonUpState.backgroundColor = 0xFFFFF0;
+			
+			var outputButtonDownState:TextField = new TextField();
+			outputButtonDownState.text = "Go!!";
+			outputButtonDownState.border = true;
+			outputButtonDownState.height = 20;
+			outputButtonDownState.width = 100;
+			
+			_selectOutputDirectoryButton = new SimpleButton(outputButtonUpState, outputButtonUpState, outputButtonDownState, outputButtonDownState);
+			_selectOutputDirectoryButton.addEventListener(MouseEvent.CLICK, onClickOutputButton);
+			_selectOutputDirectoryButton.x = 200;
+			//-------------------------------------------
+			
 			//현재상태로 패킹하는 버튼---------------------------
 			var encodeButtonUpState:TextField = new TextField();
 			encodeButtonUpState.text = "패킹할 이미지가 없어요!!";
@@ -107,7 +127,7 @@ package
 			encodeButtonDownState.width = 150;
 			
 			_encodeButton = new SimpleButton(encodeButtonUpState, encodeButtonUpState, encodeButtonDownState, encodeButtonDownState);
-			_encodeButton.x = 300;
+			_encodeButton.x = 400;
 			//----------------------------------------
 			
 			//자동 패킹 버튼-------------------------------
@@ -172,18 +192,61 @@ package
 			_packedImageDownButton.y = 500;
 			//---------------------------------------
 			
-			_dataNumText.text = "남은 이미지 개수 : " + DataLoader.dataStack.length.toString();
+			//stack에 남은 이미지 개수 출력-------------------
 			_dataNumText.x = 600;
 			_dataNumText.width = 150;
 			_dataNumText.height = 20;
+			//---------------------------------------
 			
 			addChild(_imageAddButton);
+			addChild(_selectInputDirectoryButton);
+			addChild(_selectOutputDirectoryButton);
 			addChild(_encodeButton);
 			addChild(_autoPackButton);
 			addChild(_packedImageUpButton);
 			addChild(_packedImageDownButton);
 			addChild(_dataNumText);
 			addChild(_backGround);
+		}
+		
+		private function onClickInputButton(event:MouseEvent):void
+		{
+			_file = new File();
+			_file = File.applicationDirectory;
+			_file.addEventListener(Event.SELECT, onClickInputSelectButton);
+			_file.browseForDirectory("우측하단의 폴더선택을 눌러주세요!!");
+		}
+		
+		private function onClickInputSelectButton(event:Event):void
+		{
+			_progressText.text = "로딩중!!";
+			_file.removeEventListener(Event.SELECT, onClickInputSelectButton);
+			new DataLoader(_file.nativePath, completeDataLoad);
+		}
+		
+		private function onClickOutputButton(event:MouseEvent):void
+		{
+			_file = new File();
+			_file = File.applicationDirectory;
+			_file.addEventListener(Event.SELECT, onClickOutputSelectButton);
+			_file.browseForDirectory("우측하단의 폴더선택을 눌러주세요!!");
+		}
+		
+		private function onClickOutputSelectButton(event:Event):void
+		{
+			_encoder.setEncodeDirectory(_file.nativePath);
+			_file.removeEventListener(Event.SELECT, onClickOutputSelectButton);
+		//	new DataLoader(_file.nativePath, completeDataLoad);
+		}
+		
+		/**
+		 *로딩이 완료될 경우 Packer클래스에서 해당 데이타들을 패킹을 해준 후 화면에 출력
+		 * imageQueue는 화면에 출력된 순서대로 BitmapImage객체들이 저장되어있는 큐
+		 * 
+		 */		
+		private function completeDataLoad():void
+		{
+			this.removeChild(_progressText);
 			
 			_packer = new Packer(setCanvas);
 			_packer.setPacker(DataLoader.dataStack);
@@ -192,6 +255,11 @@ package
 			var canvas:Sprite = new Sprite();
 			_backGround.addChild(canvas);
 			_currentCanvas = canvas;
+			
+			_selectInputDirectoryButton.removeEventListener(MouseEvent.CLICK, onClickInputButton);
+			this.removeChild(_selectInputDirectoryButton);
+			
+			_dataNumText.text = "남은 이미지 개수 : " + DataLoader.dataStack.length.toString();
 		}
 		
 		/**
@@ -229,6 +297,7 @@ package
 		 * @param event
 		 * 자동패킹버튼을 눌렀을 경우 타이머를 이용하여 addImageButton을 클릭합니다.
 		 * 타이머가 끝난경우 마지막화면도 패킹해주고 자동패킹버튼의 리스너들을 제거합니다.
+		 * 타이머를 대체할 방법을 찾아서 고쳐보겠습니다...
 		 */		
 		private function onClickAutoButton(event:MouseEvent):void
 		{
@@ -247,7 +316,7 @@ package
 			
 			function timerActive():void
 			{
-				onClickAddButton(event);
+				addImage();					//Timer를 대체할 방법을 찾아보고는 있는데 어떤방법으로 해야할지 모르겠습니다. 우선은 timerActive가 주기적으로 하는일을 좀더 직관적으로 알수있도록 함수명을 바꿨습니다...
 			}
 			
 			function timerComplete():void
@@ -267,6 +336,11 @@ package
 		 * 더이상 출력할 이미지가 없다면 _autoPackButton과 _addImageButton을 잠금을 시켜줍니다.
 		 */		
 		private function onClickAddButton(event:MouseEvent):void
+		{
+			addImage();
+		}
+		
+		private function addImage():void
 		{
 			if(_maxCanvasCount != _currentCanvasCount)
 			{
@@ -289,7 +363,7 @@ package
 				}
 				else
 				{
-					onClickAddButton(event);
+					addImage();
 				}
 			}
 			
