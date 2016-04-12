@@ -10,7 +10,7 @@ package
 	import flash.text.TextField;
 	import flash.utils.Timer;
 
-	[SWF(width="1024", height="1064", frameRate="60", backgroundColor="#FFFFFF")]
+	[SWF(width="1064", height="1064", frameRate="60", backgroundColor="#FFFFFF")]
 	public class Assignment_03 extends Sprite
 	{
 		private var _packer:Packer;
@@ -25,6 +25,9 @@ package
 		private var _currentBitmapImage:BitmapImage
 		private var _currentCanvas:Sprite;
 		private var _currentCanvasCount:int = 0;
+		private var _maxCanvasCount:int = 0;
+		private var _packedImageUpButton:SimpleButton;
+		private var _packedImageDownButton:SimpleButton;
 		private var _packFlag:Boolean = false;
 		
 		/**
@@ -115,9 +118,49 @@ package
 			_autoPackButton.x = 800;
 			//---------------------------------------
 			
+			//CanvasUp 버튼-------------------------------
+			var upButtonUpState:TextField = new TextField();
+			upButtonUpState.text = "\n \nU\nP";
+			upButtonUpState.border = true;
+			upButtonUpState.height = 100;
+			upButtonUpState.width = 20;
+			
+			var upButtonDownState:TextField = new TextField();
+			upButtonDownState.text = "\n*\nU\nP\n*";
+			upButtonDownState.border = true;
+			upButtonDownState.height = 100;
+			upButtonDownState.width = 20;
+			
+			_packedImageUpButton = new SimpleButton(upButtonUpState, upButtonUpState, upButtonDownState, upButtonDownState);
+			_packedImageUpButton.addEventListener(MouseEvent.CLICK, onClickUpButton);
+			_packedImageUpButton.x = 1034;
+			_packedImageUpButton.y = 200;
+			//---------------------------------------
+			
+			//CanvasDown 버튼-------------------------------
+			var downButtonUpState:TextField = new TextField();
+			downButtonUpState.text = " \nD\nO\nW\nN";
+			downButtonUpState.border = true;
+			downButtonUpState.height = 100;
+			downButtonUpState.width = 20;
+			
+			var downButtonDownState:TextField = new TextField();
+			downButtonDownState.text = "*\nD\nO\nW\nN\n*";
+			downButtonDownState.border = true;
+			downButtonDownState.height = 100;
+			downButtonDownState.width = 20;
+			
+			_packedImageDownButton = new SimpleButton(downButtonUpState, downButtonUpState, downButtonDownState, downButtonDownState);
+			_packedImageDownButton.addEventListener(MouseEvent.CLICK, onClickDownButton);
+			_packedImageDownButton.x = 1034;
+			_packedImageDownButton.y = 500;
+			//---------------------------------------
+			
 			addChild(_imageAddButton);
 			addChild(_encodeButton);
 			addChild(_autoPackButton);
+			addChild(_packedImageUpButton);
+			addChild(_packedImageDownButton);
 			addChild(_backGround);
 			
 			_packer = new Packer(setCanvas);
@@ -130,12 +173,51 @@ package
 		}
 		
 		/**
+		 *_packedImageUpButton을 클릭했을 때 호출되는 함수입니다. 
+		 * @param event
+		 * 호출될 경우 _currentCanvasCount가 _maxCanvasCount보다 작다면 화면을 위의 화면으로 전환시켜줍니다.
+		 */		
+		private function onClickUpButton(event:MouseEvent):void
+		{
+			if(_maxCanvasCount > _currentCanvasCount)
+			{
+				_currentCanvas.visible = false;
+				_currentCanvas = _backGround.getChildAt(++_currentCanvasCount) as Sprite;
+				_currentCanvas.visible = true;
+			}
+		}
+		
+		/**
+		 * _packedImageDownButton을 클릭했을 때 호출되는 함수입니다.
+		 * @param event
+		 * 호출될 경우 _currentCanvasCount가 0보다 크다면 한단계 아래의 화면으로 전환시켜줍니다.
+		 */		
+		private function onClickDownButton(event:MouseEvent):void
+		{
+			if(_currentCanvasCount > 0)
+			{
+				_currentCanvas.visible = false;
+				_currentCanvas = _backGround.getChildAt(--_currentCanvasCount) as Sprite;
+				_currentCanvas.visible = true;
+			}
+		}
+		
+		/**
 		 *From jihwan 
 		 * @param event
-		 * 
+		 * 자동패킹버튼을 눌렀을 경우 타이머를 이용하여 addImageButton을 클릭합니다.
+		 * 타이머가 끝난경우 마지막화면도 패킹해주고 자동패킹버튼의 리스너들을 제거합니다.
 		 */		
 		private function onClickAutoButton(event:MouseEvent):void
 		{
+			if(_maxCanvasCount != _currentCanvasCount)
+			{
+				_currentCanvas.visible = false;
+				_currentCanvas = _backGround.getChildAt(_maxCanvasCount) as Sprite;
+				_currentCanvas.visible = true;
+				_currentCanvasCount = _maxCanvasCount;
+			}
+			
 			var timer:Timer = new Timer(100, DataLoader.dataStack.length);
 			timer.addEventListener(TimerEvent.TIMER, timerActive);
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, timerComplete);
@@ -152,18 +234,26 @@ package
 				timer.removeEventListener(TimerEvent.TIMER, timerActive);
 				timer.removeEventListener(TimerEvent.TIMER_COMPLETE, timerComplete);
 			}
-			
-		//	onClickEncodeButton(event);
 		}
 		
 		/**
 		 *_imageAddButton의 클릭시 호출되는 함수 
 		 * @param event
+		 * 이미지 클릭 시 현제 화면을 이미지가 추가되어야하는 화면으로 전환시켜 줍니다.
 		 * _imageAddButton이 클릭되면 dataStack에 남아있는 데이터가 있다면 Packer클래스의 addImage함수를 호출합니다.
 		 * 호출된 Image정보를 받아와 화면에도 뿌려줍니다.
+		 * 더이상 출력할 이미지가 없다면 _autoPackButton과 _addImageButton을 잠금을 시켜줍니다.
 		 */		
 		private function onClickAddButton(event:MouseEvent):void
 		{
+			if(_maxCanvasCount != _currentCanvasCount)
+			{
+				_currentCanvas.visible = false;
+				_currentCanvas = _backGround.getChildAt(_maxCanvasCount) as Sprite;
+				_currentCanvas.visible = true;
+				_currentCanvasCount = _maxCanvasCount;
+			}
+			
 			if(DataLoader.dataStack.length != 0)
 			{
 				_currentBitmapImage = _packer.addImage();
@@ -196,16 +286,25 @@ package
 				TextField(_encodeButton.upState).text = "현제상태로 패킹!!";
 				TextField(_encodeButton.downState).text = "Go!!";
 				_encodeButton.addEventListener(MouseEvent.CLICK, onClickEncodeButton);
+				_packFlag = true;
 			}
 		}
 		
 		/**
 		 *_encodeButton이 클릭되었을 때 호출되는 함수입니다. 
 		 * @param event
-		 * setCanvas함수를 호출하여 현제 비트맵이미지를 encode해주면서 현제 dataStack과 packedData를 다시 정리해줍니다.
+		 * _currentCanvas를 인코딩되어야할 화면으로 옮겨준 후 setCanvas를 호출합니다.
 		 */		
 		private function onClickEncodeButton(event:MouseEvent):void
 		{
+			if(_maxCanvasCount != _currentCanvasCount)
+			{
+				_currentCanvas.visible = false;
+				_currentCanvas = _backGround.getChildAt(_maxCanvasCount) as Sprite;
+				_currentCanvas.visible = true;
+				_currentCanvasCount = _maxCanvasCount;
+			}
+			
 			setCanvas(_packer.currentPackedData);
 		}
 		
@@ -224,13 +323,15 @@ package
 			packedData.packedBitmapHeight = _currentCanvas.height;
 			_currentCanvas = canvas;
 			_currentCanvasCount++;
+			_maxCanvasCount = _currentCanvasCount;
 			encode(packedData);
 		}
 		
 		/**
 		 *실질적으로 Encoder클래스와 연결되는 함수입니다.
-		 * Encoder클래스의 encodeFromDisplay를 호출하게됩니다. 
-		 * encodeFromDisplay함수는 더이상 패킹할 데이터가 없다면 false를 반환하게 되고 그럴경우 버튼의 이미지도 변경해줍니다.
+		 * Encoder클래스의 encodeFromData를 호출하게됩니다. 
+		 * encodeFromData함수는 PackedData를 인자로 받아서 해당 객체가 가지고있는 비트맵데이터를 png로 변환하며 _imageQueue를 xml로 변환해줍니다.
+		 * 변환이되면 빈화면을 패킹하는것을 배제하기위해 패킹버튼은 잠금시켜줍니다.
 		 */		
 		private function encode(packedData:PackedData):void
 		{
@@ -241,6 +342,7 @@ package
 				_packer = new Packer(setCanvas);
 				_packer.setPacker(DataLoader.dataStack);
 			}
+			
 			TextField(_encodeButton.upState).text = "패킹할 이미지가 없어요!!";
 			TextField(_encodeButton.downState).text = "패킹할 이미지가 없어요!!";
 			_encodeButton.removeEventListener(MouseEvent.CLICK, onClickEncodeButton);

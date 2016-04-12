@@ -35,34 +35,6 @@ package
 		{
 			_dataQueue = dataStack.sort(orderPixels);
 			setPackedData();
-		//	threadPack();
-		}
-		
-		private function orderPixels(data1:BitmapImage, data2:BitmapImage):int
-		{
-			if(data1.pixels > data2.pixels) 
-			{ 
-				return -1;
-			} 
-			else if(data1.pixels < data2.pixels) 
-			{ 
-				return 1; 
-			} 
-			else 
-			{ 
-				return 0; 
-			} 
-		}
-		
-		private function setPackedData():void
-		{
-			_currentPackedData = new PackedData(MaxWidth, MaxHeight);
-			
-			_count = 0;
-			_spaceArray = new Vector.<Rectangle>();
-			var firstRect:Rectangle = new Rectangle(0, 0, _currentPackedData.packedBitmapData.width, _currentPackedData.packedBitmapData.height);
-			
-			_spaceArray.push(firstRect);
 		}
 		
 		public function addImage():BitmapImage
@@ -102,6 +74,33 @@ package
 			
 			_spaceArray.sort(orderYvalue);	//여유공간을  y값으로 정렬하여 상대적으로 아래쪽에 있는 공간은 나중에 선택이 되도록 합니다
 			return bitmapImage;
+		}
+		
+		private function orderPixels(data1:BitmapImage, data2:BitmapImage):int
+		{
+			if(data1.pixels > data2.pixels) 
+			{ 
+				return -1;
+			} 
+			else if(data1.pixels < data2.pixels) 
+			{ 
+				return 1; 
+			} 
+			else 
+			{ 
+				return 0; 
+			} 
+		}
+		
+		private function setPackedData():void
+		{
+			_currentPackedData = new PackedData(MaxWidth, MaxHeight);
+			
+			_count = 0;
+			_spaceArray = new Vector.<Rectangle>();
+			var firstRect:Rectangle = new Rectangle(0, 0, _currentPackedData.packedBitmapData.width, _currentPackedData.packedBitmapData.height);
+			
+			_spaceArray.push(firstRect);
 		}
 		
 		/**
@@ -156,6 +155,7 @@ package
 			}	
 		}
 		
+		/*
 		private function orderXvalue(space1:Rectangle, space2:Rectangle):int
 		{
 			if(space1.x < space2.x) 
@@ -171,6 +171,7 @@ package
 				return 0; 
 			} 
 		}
+		*/
 		
 		private function orderYvalue(space1:Rectangle, space2:Rectangle):int
 		{

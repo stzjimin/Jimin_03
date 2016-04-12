@@ -16,7 +16,7 @@ package
 		private static var _libName:String;
 		
 		private var _completeFunc:Function;
-		private var _assetLength:int;			//폴더내의 파일 개수
+		private var _assetLength:int = 0;			//폴더내의 파일 개수
 		private var _assetCounter:int = 0;		//로드된 비트맵의 개수
 		private var _fileURL:String;
 		
@@ -55,7 +55,7 @@ package
 		private function pushStack(...rawAssets):void
 		{
 			if(!rawAssets["isDirectory"])
-				_assetLength = rawAssets.length;
+				_assetLength = _assetLength + rawAssets.length - 1;
 			for each(var rawAsset:Object in rawAssets)
 			{
 				if(rawAsset["isDirectory"])
@@ -112,7 +112,7 @@ package
 			event.currentTarget.removeEventListener(IOErrorEvent.IO_ERROR, uncaughtError);
 			_assetCounter++;
 			
-			if(_assetCounter >= _assetLength)
+			if(_assetCounter == _assetLength)
 				_completeFunc();
 		}
 	}
