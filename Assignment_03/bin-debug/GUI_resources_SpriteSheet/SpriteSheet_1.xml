@@ -2,8 +2,8 @@
 <TextureAtlas ImagePath="SpriteSheet_1.png">
 <SubTexture name="piece22" x="0" y="0" width="540" height="302"/>
 <SubTexture name="piece15" x="540" y="0" width="271" height="186"/>
-<SubTexture name="piece14" x="540" y="186" width="300" height="168"/>
-<SubTexture name="아이유" x="0" y="302" width="300" height="168"/>
+<SubTexture name="아이유" x="540" y="186" width="300" height="168"/>
+<SubTexture name="piece14" x="0" y="302" width="300" height="168"/>
 <SubTexture name="iu" x="300" y="302" width="209" height="241"/>
 <SubTexture name="light" x="509" y="354" width="286" height="176"/>
 <SubTexture name="piece4" x="0" y="470" width="275" height="183"/>
@@ -12,7 +12,7 @@
 <SubTexture name="iu4" x="0" y="653" width="284" height="177"/>
 <SubTexture name="iu5" x="284" y="709" width="301" height="167"/>
 <SubTexture name="piece17" x="790" y="603" width="194" height="259"/>
-<SubTexture name="piece1" x="585" y="709" width="204" height="204"/>
+<SubTexture name="piece16" x="585" y="709" width="204" height="204"/>
 <SubTexture name="oris" x="811" y="0" width="180" height="180"/>
 <SubTexture name="R" x="840" y="180" width="157" height="157"/>
 <SubTexture name="piece11" x="284" y="543" width="140" height="140"/>

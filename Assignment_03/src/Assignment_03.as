@@ -5,10 +5,12 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.filesystem.File;
 	import flash.text.TextField;
+	import flash.utils.Timer;
 
-	[SWF(width="1024", height="1044", frameRate="60", backgroundColor="#FFFFFF")]
+	[SWF(width="1024", height="1064", frameRate="60", backgroundColor="#FFFFFF")]
 	public class Assignment_03 extends Sprite
 	{
 		private var _packer:Packer;
@@ -18,9 +20,11 @@ package
 		private var _time:Number;
 		private var _imageAddButton:SimpleButton;
 		private var _encodeButton:SimpleButton;
+		private var _autoPackButton:SimpleButton;
 		private var _backGround:Sprite;
 		private var _currentBitmapImage:BitmapImage
 		private var _currentCanvas:Sprite;
+		private var _currentCanvasCount:int = 0;
 		private var _packFlag:Boolean = false;
 		
 		/**
@@ -40,7 +44,7 @@ package
 			_progressText.text = "폴더를 선택해주세요!!\n";
 			addChild(_progressText);
 			_backGround = new Sprite();
-			_backGround.y = 20;
+			_backGround.y = 30;
 		}
 		
 		private function selectHandler(event:Event):void
@@ -59,22 +63,61 @@ package
 		{
 			this.removeChild(_progressText);
 			
+			//이미지 추가 버튼---------------------------------
 			var addButtonUpState:TextField = new TextField();
 			addButtonUpState.text = "이미지 추가";
+			addButtonUpState.border = true;
+			addButtonUpState.height = 20;
+			addButtonUpState.width = 100;
+			
 			var addButtonDownState:TextField = new TextField();
 			addButtonDownState.text = "Go!!";
+			addButtonDownState.border = true;
+			addButtonDownState.height = 20;
+			addButtonDownState.width = 100;
+			
 			_imageAddButton = new SimpleButton(addButtonUpState, addButtonUpState, addButtonDownState, addButtonDownState);
 			_imageAddButton.addEventListener(MouseEvent.CLICK, onClickAddButton);
+			//-------------------------------------------
 			
+			//현재상태로 패킹하는 버튼---------------------------
 			var encodeButtonUpState:TextField = new TextField();
 			encodeButtonUpState.text = "패킹할 이미지가 없어요!!";
+			encodeButtonUpState.border = true;
+			encodeButtonUpState.height = 20;
+			encodeButtonUpState.width = 150;
+			
 			var encodeButtonDownState:TextField = new TextField();
 			encodeButtonDownState.text = "패킹할 이미지가 없어요!!";
+			encodeButtonDownState.border = true;
+			encodeButtonDownState.height = 20;
+			encodeButtonDownState.width = 150;
+			
 			_encodeButton = new SimpleButton(encodeButtonUpState, encodeButtonUpState, encodeButtonDownState, encodeButtonDownState);
-			_encodeButton.x = 100;
+			_encodeButton.x = 300;
+			//----------------------------------------
+			
+			//자동 패킹 버튼-------------------------------
+			var autoPackButtonUpState:TextField = new TextField();
+			autoPackButtonUpState.text = "자동패킹";
+			autoPackButtonUpState.border = true;
+			autoPackButtonUpState.height = 20;
+			autoPackButtonUpState.width = 100;
+			
+			var autoPackButtonDownState:TextField = new TextField();
+			autoPackButtonDownState.text = "Go!!";
+			autoPackButtonDownState.border = true;
+			autoPackButtonDownState.height = 20;
+			autoPackButtonDownState.width = 100;
+			
+			_autoPackButton = new SimpleButton(autoPackButtonUpState, autoPackButtonUpState, autoPackButtonDownState, autoPackButtonDownState);
+			_autoPackButton.addEventListener(MouseEvent.CLICK, onClickAutoButton);
+			_autoPackButton.x = 800;
+			//---------------------------------------
 			
 			addChild(_imageAddButton);
 			addChild(_encodeButton);
+			addChild(_autoPackButton);
 			addChild(_backGround);
 			
 			_packer = new Packer(setCanvas);
@@ -84,6 +127,33 @@ package
 			var canvas:Sprite = new Sprite();
 			_backGround.addChild(canvas);
 			_currentCanvas = canvas;
+		}
+		
+		/**
+		 *From jihwan 
+		 * @param event
+		 * 
+		 */		
+		private function onClickAutoButton(event:MouseEvent):void
+		{
+			var timer:Timer = new Timer(100, DataLoader.dataStack.length);
+			timer.addEventListener(TimerEvent.TIMER, timerActive);
+			timer.addEventListener(TimerEvent.TIMER_COMPLETE, timerComplete);
+			timer.start();
+			
+			function timerActive():void
+			{
+				onClickAddButton(event);
+			}
+			
+			function timerComplete():void
+			{
+				onClickEncodeButton(event);
+				timer.removeEventListener(TimerEvent.TIMER, timerActive);
+				timer.removeEventListener(TimerEvent.TIMER_COMPLETE, timerComplete);
+			}
+			
+		//	onClickEncodeButton(event);
 		}
 		
 		/**
@@ -115,6 +185,10 @@ package
 				TextField(_imageAddButton.upState).text = "No Image!!";
 				TextField(_imageAddButton.downState).text = "No Image!!";
 				_imageAddButton.removeEventListener(MouseEvent.CLICK, onClickAddButton);
+				
+				TextField(_autoPackButton.upState).text = "No Image!!";
+				TextField(_autoPackButton.downState).text = "No Image!!";
+				_autoPackButton.removeEventListener(MouseEvent.CLICK, onClickAutoButton);
 			}
 			
 			if(!_packFlag)
@@ -149,6 +223,7 @@ package
 			packedData.packedBitmapWidth = _currentCanvas.width;
 			packedData.packedBitmapHeight = _currentCanvas.height;
 			_currentCanvas = canvas;
+			_currentCanvasCount++;
 			encode(packedData);
 		}
 		

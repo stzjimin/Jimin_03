@@ -2,9 +2,9 @@
 <TextureAtlas ImagePath="SpriteSheet_0.png">
 <SubTexture name="iu3" x="0" y="0" width="540" height="809"/>
 <SubTexture name="mario" x="540" y="0" width="405" height="175"/>
-<SubTexture name="piece13" x="540" y="175" width="225" height="225"/>
-<SubTexture name="sim" x="765" y="175" width="225" height="225"/>
-<SubTexture name="apple" x="540" y="400" width="225" height="225"/>
+<SubTexture name="apple" x="540" y="175" width="225" height="225"/>
+<SubTexture name="piece13" x="765" y="175" width="225" height="225"/>
+<SubTexture name="sim" x="540" y="400" width="225" height="225"/>
 <SubTexture name="pika3" x="765" y="400" width="225" height="225"/>
 <SubTexture name="piece18" x="540" y="625" width="289" height="175"/>
 <SubTexture name="iu2" x="540" y="800" width="282" height="179"/>
@@ -22,10 +22,10 @@
 <SubTexture name="minimize" x="990" y="179" width="32" height="32"/>
 <SubTexture name="piece29" x="945" y="148" width="27" height="27"/>
 <SubTexture name="piece23" x="990" y="211" width="24" height="22"/>
-<SubTexture name="piece30" x="972" y="148" width="16" height="15"/>
-<SubTexture name="piece33" x="990" y="233" width="16" height="15"/>
-<SubTexture name="piece31" x="1006" y="233" width="16" height="15"/>
-<SubTexture name="piece32" x="990" y="248" width="16" height="15"/>
+<SubTexture name="piece33" x="972" y="148" width="16" height="15"/>
+<SubTexture name="piece30" x="990" y="233" width="16" height="15"/>
+<SubTexture name="piece32" x="1006" y="233" width="16" height="15"/>
+<SubTexture name="piece31" x="990" y="248" width="16" height="15"/>
 <SubTexture name="piece27" x="1010" y="0" width="13" height="13"/>
 <SubTexture name="piece24" x="1010" y="13" width="8" height="8"/>
 </TextureAtlas>

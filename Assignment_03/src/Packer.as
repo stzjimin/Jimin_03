@@ -60,8 +60,6 @@ package
 			
 			_count = 0;
 			_spaceArray = new Vector.<Rectangle>();
-			_currentPackedData.packedBitmapWidth = _dataQueue[_dataQueue.length-1].bitmap.width;
-			_currentPackedData.packedBitmapHeight = _dataQueue[_dataQueue.length-1].bitmap.height;
 			var firstRect:Rectangle = new Rectangle(0, 0, _currentPackedData.packedBitmapData.width, _currentPackedData.packedBitmapData.height);
 			
 			_spaceArray.push(firstRect);
@@ -70,7 +68,6 @@ package
 		public function addImage():BitmapImage
 		{
 			var bitmapImage:BitmapImage = _dataQueue.shift();
-			trace(bitmapImage);
 			var nonFlag:Boolean = true;
 			for(var i:int = 0; i < _spaceArray.length; i++)
 			{

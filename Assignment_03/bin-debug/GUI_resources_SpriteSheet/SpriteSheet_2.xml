@@ -2,7 +2,7 @@
 <TextureAtlas ImagePath="SpriteSheet_2.png">
 <SubTexture name="piece20" x="0" y="0" width="224" height="224"/>
 <SubTexture name="19" x="224" y="0" width="230" height="218"/>
-<SubTexture name="piece16" x="454" y="0" width="204" height="204"/>
+<SubTexture name="piece1" x="454" y="0" width="204" height="204"/>
 <SubTexture name="man" x="658" y="0" width="204" height="204"/>
 <SubTexture name="piece5" x="454" y="204" width="202" height="202"/>
 </TextureAtlas>
