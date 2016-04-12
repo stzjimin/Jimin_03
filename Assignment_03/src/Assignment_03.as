@@ -38,7 +38,7 @@ package
 		{
 			_file = new File();
 			_file = File.applicationDirectory;
-			_file.addEventListener(Event.SELECT, selectHandler);
+			_file.addEventListener(Event.SELECT, onClickSelectButton);
 			_file.browseForDirectory("우측하단의 폴더선택을 눌러주세요!!");
 			_progressText.x = 430;
 			_progressText.y = 450;
@@ -50,10 +50,10 @@ package
 			_backGround.y = 30;
 		}
 		
-		private function selectHandler(event:Event):void
+		private function onClickSelectButton(event:Event):void
 		{
 			_progressText.text = "로딩중!!";
-			_file.removeEventListener(Event.SELECT, selectHandler);
+			_file.removeEventListener(Event.SELECT, onClickSelectButton);
 			new DataLoader(_file.nativePath, completeDataLoad);
 		}
 		
