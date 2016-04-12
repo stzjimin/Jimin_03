@@ -28,14 +28,6 @@ package
 			_count = 0;
 		}
 		
-		/*
-		public function encodeFromVector(packedDataVector:Vector.<PackedData>):void
-		{
-			for(var i:int = _count; i < packedDataVector.length; i++)
-				encodeFromData(packedDataVector[i]);
-		}
-		*/
-		
 		public function encodeFromData(packedData:PackedData):void
 		{
 			getPngEncode(packedData, "SpriteSheet_" + _count);
