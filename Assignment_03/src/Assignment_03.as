@@ -317,7 +317,6 @@ package
 		{
 			var canvas:Sprite = new Sprite();
 			_currentCanvas.visible = false;
-			//	_backGround.removeChildAt(0);
 			_backGround.addChild(canvas);
 			packedData.packedBitmapWidth = _currentCanvas.width;
 			packedData.packedBitmapHeight = _currentCanvas.height;

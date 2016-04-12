@@ -76,6 +76,22 @@ package
 			return bitmapImage;
 		}
 		
+		private function orderName(data1:BitmapImage, data2:BitmapImage):int
+		{
+			if(data1.name < data2.name) 
+			{ 
+				return -1;
+			} 
+			else if(data1.name > data2.name) 
+			{ 
+				return 1; 
+			} 
+			else 
+			{ 
+				return 0; 
+			} 
+		}
+		
 		private function orderPixels(data1:BitmapImage, data2:BitmapImage):int
 		{
 			if(data1.pixels > data2.pixels) 
@@ -92,6 +108,10 @@ package
 			} 
 		}
 		
+		/**
+		 *Pacer가 패킹을 하기전 준비를 위한 함수입니다. 
+		 * 준비를 위한 연산들(새로운 밑바탕이 되는 비트맵데이터의 생성, 카운트를 초기화, 여유공간을 초기화)을 모아놓았습니다.
+		 */		
 		private function setPackedData():void
 		{
 			_currentPackedData = new PackedData(MaxWidth, MaxHeight);
@@ -155,7 +175,6 @@ package
 			}	
 		}
 		
-		/*
 		private function orderXvalue(space1:Rectangle, space2:Rectangle):int
 		{
 			if(space1.x < space2.x) 
@@ -171,7 +190,6 @@ package
 				return 0; 
 			} 
 		}
-		*/
 		
 		private function orderYvalue(space1:Rectangle, space2:Rectangle):int
 		{
