@@ -21,7 +21,7 @@ package
 		private var _backGround:Sprite;
 		private var _currentBitmapImage:BitmapImage
 		private var _currentCanvas:Sprite;
-		private var _endFlag:Boolean = false;
+		private var _packFlag:Boolean = false;
 		
 		/**
 		 *프로그램이 시작될 때 이미지파일들을 로딩 
@@ -67,20 +67,18 @@ package
 			_imageAddButton.addEventListener(MouseEvent.CLICK, onClickAddButton);
 			
 			var encodeButtonUpState:TextField = new TextField();
-			encodeButtonUpState.text = "현제상태로 패킹!!";
+			encodeButtonUpState.text = "패킹할 이미지가 없어요!!";
 			var encodeButtonDownState:TextField = new TextField();
-			encodeButtonDownState.text = "Go!!";
+			encodeButtonDownState.text = "패킹할 이미지가 없어요!!";
 			_encodeButton = new SimpleButton(encodeButtonUpState, encodeButtonUpState, encodeButtonDownState, encodeButtonDownState);
-			_encodeButton.addEventListener(MouseEvent.CLICK, onClickEncodeButton);
 			_encodeButton.x = 100;
 			
 			addChild(_imageAddButton);
 			addChild(_encodeButton);
 			addChild(_backGround);
 			
-			_packer = new Packer(setCavas);
-			_packer.setPacking(DataLoader.dataStack);
-			_packer.setPackedData();
+			_packer = new Packer(setCanvas);
+			_packer.setPacker(DataLoader.dataStack);
 			_encoder.setEncode();
 			
 			var canvas:Sprite = new Sprite();
@@ -111,26 +109,20 @@ package
 					onClickAddButton(event);
 				}
 			}
-			else
+			
+			if(DataLoader.dataStack.length == 0)
 			{
 				TextField(_imageAddButton.upState).text = "No Image!!";
 				TextField(_imageAddButton.downState).text = "No Image!!";
 				_imageAddButton.removeEventListener(MouseEvent.CLICK, onClickAddButton);
 			}
-		}
-		
-		/**
-		 *setCanvas함수는 합쳐지는 비트맵데이터를 초기화하고 새로운 비트맵에 합치기 시작할때 호출됩니다. 
-		 * 기존에 화면을 보여주고있던 Sprite는 제거하고 새로운 sprite로 교체해주며 해당 sprite를 _currentCanvas에 넘겨줍니다.
-		 * 새로운 비트맵에 합친다는것은 기존에 합쳐지던 비트맵데이터는 필요가 없다는 얘기이므로 해당 비트맵데이터는 encode함수를 호출에 png와 xml파일로 인코딩해줍니다.
-		 */		
-		private function setCavas():void
-		{
-			var canvas:Sprite = new Sprite();
-			_backGround.removeChildAt(0);
-			_backGround.addChild(canvas);
-			_currentCanvas = canvas;
-			encode();
+			
+			if(!_packFlag)
+			{
+				TextField(_encodeButton.upState).text = "현제상태로 패킹!!";
+				TextField(_encodeButton.downState).text = "Go!!";
+				_encodeButton.addEventListener(MouseEvent.CLICK, onClickEncodeButton);
+			}
 		}
 		
 		/**
@@ -140,12 +132,24 @@ package
 		 */		
 		private function onClickEncodeButton(event:MouseEvent):void
 		{
-			setCavas();
-			if(DataLoader.dataStack.length != 0)
-			{
-				_packer.setPacking(DataLoader.dataStack);
-				_packer.setPackedData();
-			}
+			setCanvas(_packer.currentPackedData);
+		}
+		
+		/**
+		 *setCanvas함수는 합쳐지는 비트맵데이터를 초기화하고 새로운 비트맵에 합치기 시작할때 호출됩니다. 
+		 * 기존에 화면을 보여주고있던 Sprite는 제거하고 새로운 sprite로 교체해주며 해당 sprite를 _currentCanvas에 넘겨줍니다.
+		 * 새로운 비트맵에 합친다는것은 기존에 합쳐지던 비트맵데이터는 필요가 없다는 얘기이므로 해당 비트맵데이터는 encode함수를 호출에 png와 xml파일로 인코딩해줍니다.
+		 */		
+		private function setCanvas(packedData:PackedData):void
+		{
+			var canvas:Sprite = new Sprite();
+			_currentCanvas.visible = false;
+			//	_backGround.removeChildAt(0);
+			_backGround.addChild(canvas);
+			packedData.packedBitmapWidth = _currentCanvas.width;
+			packedData.packedBitmapHeight = _currentCanvas.height;
+			_currentCanvas = canvas;
+			encode(packedData);
 		}
 		
 		/**
@@ -153,17 +157,19 @@ package
 		 * Encoder클래스의 encodeFromDisplay를 호출하게됩니다. 
 		 * encodeFromDisplay함수는 더이상 패킹할 데이터가 없다면 false를 반환하게 되고 그럴경우 버튼의 이미지도 변경해줍니다.
 		 */		
-		private function encode():void
+		private function encode(packedData:PackedData):void
 		{
-			var flag:Boolean;
-			if(_packer.packedDataVector.length != 0)
-				flag = _encoder.encodeFromDisplay(_packer.packedDataVector);
-			if(!flag)
+			_encoder.encodeFromData(packedData);
+
+			if(DataLoader.dataStack.length != 0)
 			{
-				TextField(_encodeButton.upState).text = "No PackedData";
-				TextField(_encodeButton.downState).text = "No PackedData";
-				_encodeButton.removeEventListener(MouseEvent.CLICK, onClickEncodeButton);
+				_packer = new Packer(setCanvas);
+				_packer.setPacker(DataLoader.dataStack);
 			}
+			TextField(_encodeButton.upState).text = "패킹할 이미지가 없어요!!";
+			TextField(_encodeButton.downState).text = "패킹할 이미지가 없어요!!";
+			_encodeButton.removeEventListener(MouseEvent.CLICK, onClickEncodeButton);
+			_packFlag = false;
 		}
 	}
 }

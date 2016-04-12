@@ -8,24 +8,22 @@ package
 		private const MaxWidth:int = 1024;
 		private const MaxHeight:int = 1024;
 		
-		private var _packedDataVector:Vector.<PackedData>;
 		private var _dataQueue:Vector.<BitmapImage>;
-
+		private var _currentPackedData:PackedData;
+		
 		private var _changeFunc:Function;
 		
 		private var _count:int;
 		private var _spaceArray:Vector.<Rectangle>;
-		private var _currentPackedData:PackedData;
 		
 		public function Packer(changeFunc:Function)
 		{
-			_packedDataVector = new Vector.<PackedData>();
 			_changeFunc = changeFunc;
 		}
-
-		public function get packedDataVector():Vector.<PackedData>
+		
+		public function get currentPackedData():PackedData
 		{
-			return _packedDataVector;
+			return _currentPackedData;
 		}
 		
 		/**
@@ -33,9 +31,10 @@ package
 		 * @param dataStack = 비트맵데이터가 들어있는 스택
 		 * 합치기전에 높이순으로 정렬한 후 시작
 		 */		
-		public function setPacking(dataStack:Vector.<BitmapImage>):void
+		public function setPacker(dataStack:Vector.<BitmapImage>):void
 		{
 			_dataQueue = dataStack.sort(orderPixels);
+			setPackedData();
 		//	threadPack();
 		}
 		
@@ -55,27 +54,17 @@ package
 			} 
 		}
 		
-		public function threadPack():void
+		private function setPackedData():void
 		{
-			while(_dataQueue.length != 0)
-			{
-				addImage();
-			}
-		}
-		
-		public function setPackedData():void
-		{
-			var currentPackedData:PackedData = new PackedData(MaxWidth, MaxHeight);
-			_packedDataVector.push(currentPackedData);
+			_currentPackedData = new PackedData(MaxWidth, MaxHeight);
 			
 			_count = 0;
 			_spaceArray = new Vector.<Rectangle>();
-			currentPackedData.packedBitmapWidth = _dataQueue[_dataQueue.length-1].bitmap.width;
-			currentPackedData.packedBitmapHeight = _dataQueue[_dataQueue.length-1].bitmap.height;
-			var firstRect:Rectangle = new Rectangle(0, 0, currentPackedData.packedBitmapData.width, currentPackedData.packedBitmapData.height);
+			_currentPackedData.packedBitmapWidth = _dataQueue[_dataQueue.length-1].bitmap.width;
+			_currentPackedData.packedBitmapHeight = _dataQueue[_dataQueue.length-1].bitmap.height;
+			var firstRect:Rectangle = new Rectangle(0, 0, _currentPackedData.packedBitmapData.width, _currentPackedData.packedBitmapData.height);
 			
 			_spaceArray.push(firstRect);
-			_currentPackedData = _packedDataVector[_packedDataVector.length-1];
 		}
 		
 		public function addImage():BitmapImage
@@ -95,10 +84,6 @@ package
 					
 					_currentPackedData.packedBitmapData.merge(bitmapImage.bitmap.bitmapData, bitmapImage.bitmap.bitmapData.rect, point, 0xFF,0xFF,0xFF,0xFF);
 					_currentPackedData.packedImageQueue.push(bitmapImage);
-					if(_currentPackedData.packedBitmapWidth < bitmapImage.x+bitmapImage.bitmap.width)
-						_currentPackedData.packedBitmapWidth = bitmapImage.x+bitmapImage.bitmap.width;
-					if(_currentPackedData.packedBitmapHeight < bitmapImage.y+bitmapImage.bitmap.height)
-						_currentPackedData.packedBitmapHeight = bitmapImage.y+bitmapImage.bitmap.height;
 					
 					//이미지와 겹쳐지는 공간이 있다면 해당 공간을 분할
 					searchIntersects(_spaceArray, imageRect);
@@ -114,10 +99,7 @@ package
 				_count++;
 				_dataQueue.push(bitmapImage);
 				if(_dataQueue.length <= _count)
-				{
-					_changeFunc();
-					setPackedData();
-				}
+					_changeFunc(_currentPackedData);
 				return null;
 			}
 			
