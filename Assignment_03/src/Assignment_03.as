@@ -1,7 +1,6 @@
 package
 {
 	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -34,6 +33,7 @@ package
 		private var _maxCanvasCount:int = 0;
 		
 		private var _packFlag:Boolean = false;
+		private var _dataNumText:TextField = new TextField();
 		
 		/**
 		 *프로그램이 시작될 때 이미지파일들을 로딩 
@@ -78,6 +78,8 @@ package
 			addButtonUpState.border = true;
 			addButtonUpState.height = 20;
 			addButtonUpState.width = 100;
+			addButtonUpState.background = true;
+			addButtonUpState.backgroundColor = 0xFFFFF0;
 			
 			var addButtonDownState:TextField = new TextField();
 			addButtonDownState.text = "Go!!";
@@ -95,6 +97,8 @@ package
 			encodeButtonUpState.border = true;
 			encodeButtonUpState.height = 20;
 			encodeButtonUpState.width = 150;
+			encodeButtonUpState.background = true;
+			encodeButtonUpState.backgroundColor = 0xFFFFF0;
 			
 			var encodeButtonDownState:TextField = new TextField();
 			encodeButtonDownState.text = "패킹할 이미지가 없어요!!";
@@ -112,6 +116,8 @@ package
 			autoPackButtonUpState.border = true;
 			autoPackButtonUpState.height = 20;
 			autoPackButtonUpState.width = 100;
+			autoPackButtonUpState.background = true;
+			autoPackButtonUpState.backgroundColor = 0xFFFFF0;
 			
 			var autoPackButtonDownState:TextField = new TextField();
 			autoPackButtonDownState.text = "Go!!";
@@ -130,6 +136,8 @@ package
 			upButtonUpState.border = true;
 			upButtonUpState.height = 100;
 			upButtonUpState.width = 20;
+			upButtonUpState.background = true;
+			upButtonUpState.backgroundColor = 0xFFFFF0;
 			
 			var upButtonDownState:TextField = new TextField();
 			upButtonDownState.text = "\n*\nU\nP\n*";
@@ -149,6 +157,8 @@ package
 			downButtonUpState.border = true;
 			downButtonUpState.height = 100;
 			downButtonUpState.width = 20;
+			downButtonUpState.background = true;
+			downButtonUpState.backgroundColor = 0xFFFFF0;
 			
 			var downButtonDownState:TextField = new TextField();
 			downButtonDownState.text = "*\nD\nO\nW\nN\n*";
@@ -162,11 +172,17 @@ package
 			_packedImageDownButton.y = 500;
 			//---------------------------------------
 			
+			_dataNumText.text = "남은 이미지 개수 : " + DataLoader.dataStack.length.toString();
+			_dataNumText.x = 600;
+			_dataNumText.width = 150;
+			_dataNumText.height = 20;
+			
 			addChild(_imageAddButton);
 			addChild(_encodeButton);
 			addChild(_autoPackButton);
 			addChild(_packedImageUpButton);
 			addChild(_packedImageDownButton);
+			addChild(_dataNumText);
 			addChild(_backGround);
 			
 			_packer = new Packer(setCanvas);
@@ -269,6 +285,7 @@ package
 					currentImage.x = _currentBitmapImage.x;
 					currentImage.y = _currentBitmapImage.y;
 					_currentCanvas.addChild(currentImage);
+					_dataNumText.text = "남은 이미지 개수 : " + DataLoader.dataStack.length.toString();
 				}
 				else
 				{
@@ -281,10 +298,12 @@ package
 				TextField(_imageAddButton.upState).text = "No Image!!";
 				TextField(_imageAddButton.downState).text = "No Image!!";
 				_imageAddButton.removeEventListener(MouseEvent.CLICK, onClickAddButton);
+				TextField(_imageAddButton.upState).background = false;
 				
 				TextField(_autoPackButton.upState).text = "No Image!!";
 				TextField(_autoPackButton.downState).text = "No Image!!";
 				_autoPackButton.removeEventListener(MouseEvent.CLICK, onClickAutoButton);
+				TextField(_autoPackButton.upState).background = false;
 			}
 			
 			if(!_packFlag)
@@ -292,6 +311,7 @@ package
 				TextField(_encodeButton.upState).text = "현제상태로 패킹!!";
 				TextField(_encodeButton.downState).text = "Go!!";
 				_encodeButton.addEventListener(MouseEvent.CLICK, onClickEncodeButton);
+				TextField(_encodeButton.upState).background = true;
 				_packFlag = true;
 			}
 		}
@@ -352,6 +372,7 @@ package
 			TextField(_encodeButton.upState).text = "패킹할 이미지가 없어요!!";
 			TextField(_encodeButton.downState).text = "패킹할 이미지가 없어요!!";
 			_encodeButton.removeEventListener(MouseEvent.CLICK, onClickEncodeButton);
+			TextField(_encodeButton.upState).background = false;
 			_packFlag = false;
 		}
 	}
