@@ -27,7 +27,6 @@ package
 		private var _selectOutputDirectoryButton:SimpleButton;
 		
 		private var _backGround:Sprite;
-		private var _currentBitmapImage:BitmapImage
 		private var _currentCanvas:Sprite;
 		private var _currentCanvasCount:int = 0;
 		private var _maxCanvasCount:int = 0;
@@ -369,12 +368,12 @@ package
 			
 			if(_dataLoader.dataStack.length != 0)
 			{
-				_currentBitmapImage = _packer.addImage();
-				if(_currentBitmapImage != null)
+				var currentBitmapImage:BitmapImage = _packer.addImage();
+				if(currentBitmapImage != null)
 				{
-					var currentImage:Bitmap = _currentBitmapImage.bitmap;
-					currentImage.x = _currentBitmapImage.x;
-					currentImage.y = _currentBitmapImage.y;
+					var currentImage:Bitmap = currentBitmapImage.bitmap;
+					currentImage.x = currentBitmapImage.x;
+					currentImage.y = currentBitmapImage.y;
 					_currentCanvas.addChild(currentImage);
 					_dataNumText.text = "남은 이미지 개수 : " + _dataLoader.dataStack.length.toString();
 				}
