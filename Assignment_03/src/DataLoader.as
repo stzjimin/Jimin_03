@@ -12,8 +12,8 @@ package
 	{	
 		private const appReg:RegExp = new RegExp(/app:\//);
 		
-		private static var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
-		private static var _libName:String;
+		private var _dataStack:Vector.<BitmapImage>;	//반환될 BitmapImage의 백터배열
+		private var _libName:String;
 		
 		private var _completeFunc:Function;
 		private var _assetLength:int = 1;			//폴더내의 파일 개수
@@ -36,12 +36,12 @@ package
 			pushStack(File.applicationDirectory.resolvePath(_libName));
 		}
 		
-		public static function get libName():String
+		public function get libName():String
 		{
 			return _libName;
 		}
 		
-		public static function get dataStack():Vector.<BitmapImage>
+		public function get dataStack():Vector.<BitmapImage>
 		{
 			return _dataStack;
 		}

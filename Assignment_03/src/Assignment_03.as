@@ -36,10 +36,8 @@ package
 		private var _packFlag:Boolean = false;
 		private var _dataNumText:TextField = new TextField();
 		
-		/**
-		 *프로그램이 시작될 때 이미지파일들을 로딩 
-		 * 
-		 */		
+		private var _dataLoader:DataLoader;
+		
 		public function Assignment_03()
 		{
 			_progressText.x = 430;
@@ -207,8 +205,14 @@ package
 			addChild(_packedImageDownButton);
 			addChild(_dataNumText);
 			addChild(_backGround);
+			
+			_packer = new Packer(setCanvas);
 		}
-		
+		/**
+		 *입력폴더 선택버튼을 눌렀을 때 호출되는 함수 
+		 * @param event
+		 * 폴더선택창을 띄운 후 폴더가 선택되면 onClickInputSelectButton함수를 호출합니다.
+		 */		
 		private function onClickInputButton(event:MouseEvent):void
 		{
 			_file = new File();
@@ -217,13 +221,25 @@ package
 			_file.browseForDirectory("우측하단의 폴더선택을 눌러주세요!!");
 		}
 		
+		/**
+		 *입력폴더선택창에서 폴더를 선택할 경우 호출되는 함수
+		 * @param event
+		 * 입려폴더가 선택이 되면 해당 폴더의 경로와 완료함수를 _dataLoader로 넘겨줍니다.
+		 * DataLoader클래스의 객체가 생성될 경우 libName이 설정이 되므로 해당 경로를 이용하여 Encoder클래스의 initEncoder함수를 호출합니다.
+		 */		
 		private function onClickInputSelectButton(event:Event):void
 		{
 			_progressText.text = "로딩중!!";
 			_file.removeEventListener(Event.SELECT, onClickInputSelectButton);
-			new DataLoader(_file.nativePath, completeDataLoad);
+			_dataLoader = new DataLoader(_file.nativePath, completeDataLoad);
+			_encoder.initEncoder(_dataLoader.libName);
 		}
 		
+		/**
+		 *출력폴더 선택 버튼을 누를 경우 호출되는 함수입니다. 
+		 * @param event
+		 * 폴더선택창을 띄운 후 폴더가 선택되면 onClickOutputSelectButton함수를 호출합니다.
+		 */		
 		private function onClickOutputButton(event:MouseEvent):void
 		{
 			_file = new File();
@@ -232,25 +248,27 @@ package
 			_file.browseForDirectory("우측하단의 폴더선택을 눌러주세요!!");
 		}
 		
+		/**
+		 *출력폴더선택창에서 폴더를 선택할 경우 호출되는 함수
+		 * @param event
+		 * 출력폴더가 선택이되면 Encoder클래스의 setEncodeDirectory함수를 호출하며 인자로 해당폴더의 경로를 넘겨줍니다.
+		 */		
 		private function onClickOutputSelectButton(event:Event):void
 		{
 			_encoder.setEncodeDirectory(_file.nativePath);
 			_file.removeEventListener(Event.SELECT, onClickOutputSelectButton);
-		//	new DataLoader(_file.nativePath, completeDataLoad);
 		}
 		
 		/**
-		 *로딩이 완료될 경우 Packer클래스에서 해당 데이타들을 패킹을 해준 후 화면에 출력
-		 * imageQueue는 화면에 출력된 순서대로 BitmapImage객체들이 저장되어있는 큐
-		 * 
+		 *DataLoader클래스에서 모든 로딩이 완료되면 호출되는 함수입니다. 
+		 * 로딩이 완료되면 해당 데이터를 Packer클래스의 initPacker함수의 인자로 넘겨줍니다.
+		 * 그 후 패킹되는 화면을 보여주기위하여 화면을 준비합니다.
 		 */		
 		private function completeDataLoad():void
 		{
 			this.removeChild(_progressText);
 			
-			_packer = new Packer(setCanvas);
-			_packer.setPacker(DataLoader.dataStack);
-			_encoder.setEncode();
+			_packer.initPacker(_dataLoader.dataStack);
 			
 			var canvas:Sprite = new Sprite();
 			_backGround.addChild(canvas);
@@ -259,7 +277,7 @@ package
 			_selectInputDirectoryButton.removeEventListener(MouseEvent.CLICK, onClickInputButton);
 			this.removeChild(_selectInputDirectoryButton);
 			
-			_dataNumText.text = "남은 이미지 개수 : " + DataLoader.dataStack.length.toString();
+			_dataNumText.text = "남은 이미지 개수 : " + _dataLoader.dataStack.length.toString();
 		}
 		
 		/**
@@ -309,7 +327,7 @@ package
 				_currentCanvasCount = _maxCanvasCount;
 			}
 			
-			var timer:Timer = new Timer(100, DataLoader.dataStack.length);
+			var timer:Timer = new Timer(100, _dataLoader.dataStack.length);
 			timer.addEventListener(TimerEvent.TIMER, timerActive);
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, timerComplete);
 			timer.start();
@@ -350,7 +368,7 @@ package
 				_currentCanvasCount = _maxCanvasCount;
 			}
 			
-			if(DataLoader.dataStack.length != 0)
+			if(_dataLoader.dataStack.length != 0)
 			{
 				_currentBitmapImage = _packer.addImage();
 				if(_currentBitmapImage != null)
@@ -359,7 +377,7 @@ package
 					currentImage.x = _currentBitmapImage.x;
 					currentImage.y = _currentBitmapImage.y;
 					_currentCanvas.addChild(currentImage);
-					_dataNumText.text = "남은 이미지 개수 : " + DataLoader.dataStack.length.toString();
+					_dataNumText.text = "남은 이미지 개수 : " + _dataLoader.dataStack.length.toString();
 				}
 				else
 				{
@@ -367,7 +385,7 @@ package
 				}
 			}
 			
-			if(DataLoader.dataStack.length == 0)
+			if(_dataLoader.dataStack.length == 0)
 			{
 				TextField(_imageAddButton.upState).text = "No Image!!";
 				TextField(_imageAddButton.downState).text = "No Image!!";
@@ -437,10 +455,9 @@ package
 		{
 			_encoder.encodeFromData(packedData);
 
-			if(DataLoader.dataStack.length != 0)
+			if(_dataLoader.dataStack.length != 0)
 			{
-				_packer = new Packer(setCanvas);
-				_packer.setPacker(DataLoader.dataStack);
+				_packer.initPacker(_dataLoader.dataStack);
 			}
 			
 			TextField(_encodeButton.upState).text = "패킹할 이미지가 없어요!!";

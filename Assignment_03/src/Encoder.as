@@ -25,15 +25,21 @@ package
 		/**
 		 *파일들을 패킹하기전 준비를위한 함수입니다. 
 		 * 준비를위해서 이미지들이 들어있던 폴더와 같은위치로 파일의 경로를 설정합니다.
-		 *  카운트도 초기화해줍니다.
+		 * 카운트도 초기화해줍니다.
 		 */		
-		public function setEncode():void
+		public function initEncoder(libName:String):void
 		{
-			_localPath = File.desktopDirectory.resolvePath(DataLoader.libName + "_SpriteSheet");
+			_localPath = File.desktopDirectory.resolvePath(libName + "_SpriteSheet");
 		//	_localPath = File.documentsDirectory.resolvePath("SpriteSheet");
 			_count = 0;
 		}
 		
+		/**
+		 *출력폴더를 따로지정해줄 때 호출되는 함수입니다. 
+		 * @param path
+		 * 기본으로 입력되는 이미지들이 있는 폴더와 같은 경로를 가지는 곳에 저장하게되지만
+		 * 사용자가 직접 출력폴더를 지정할 수 있게 하기위하여 만들어진 함수입니다.
+		 */		
 		public function setEncodeDirectory(path:String):void
 		{
 			_localPath = File.desktopDirectory.resolvePath(path);

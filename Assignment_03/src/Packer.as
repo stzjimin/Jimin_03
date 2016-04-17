@@ -27,16 +27,21 @@ package
 		}
 		
 		/**
-		 *비트맵데이터들을 하나의 비트맵데이터로 합치기 위한 함수 
-		 * @param dataStack = 비트맵데이터가 들어있는 스택
-		 * 합치기전에 높이순으로 정렬한 후 시작
+		 *Packer클래스에서 초기화를 위한 함수입니다. 
+		 * @param dataStack
+		 * 
 		 */		
-		public function setPacker(dataStack:Vector.<BitmapImage>):void
+		public function initPacker(dataStack:Vector.<BitmapImage>):void
 		{
-			_dataQueue = dataStack.sort(orderPixels);
-			setPackedData();
+			_dataQueue = dataStack;
+			initPackedData();
 		}
 		
+		/**
+		 *_dataQueue에 있는 이미지중 가장 앞에있는 이미지 하나를 가져와 패킹하는 함수입니다. 
+		 * @return = 리턴값으로 추가되는 이미지에 대한 정보를가진 BitmapImage객체를 반환해줍니다.
+		 * 호출은 Assignment_03클래스에서 하게되며 호출되면 반환값으로 추가되는 이미지의 정보를가진 BitmapImage객체를 반환해줍니다.
+		 */		
 		public function addImage():BitmapImage
 		{
 			var bitmapImage:BitmapImage = _dataQueue.shift();
@@ -112,8 +117,9 @@ package
 		 *Pacer가 패킹을 하기전 준비를 위한 함수입니다. 
 		 * 준비를 위한 연산들(새로운 밑바탕이 되는 비트맵데이터의 생성, 카운트를 초기화, 여유공간을 초기화)을 모아놓았습니다.
 		 */		
-		private function setPackedData():void
+		private function initPackedData():void
 		{
+			_dataQueue = _dataQueue.sort(orderPixels);
 			_currentPackedData = new PackedData(MaxWidth, MaxHeight);
 			
 			_count = 0;
