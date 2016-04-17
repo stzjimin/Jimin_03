@@ -311,9 +311,7 @@ package
 		/**
 		 *From jihwan 
 		 * @param event
-		 * 자동패킹버튼을 눌렀을 경우 타이머를 이용하여 addImageButton을 클릭합니다.
-		 * 타이머가 끝난경우 마지막화면도 패킹해주고 자동패킹버튼의 리스너들을 제거합니다.
-		 * 타이머를 대체할 방법을 찾아서 고쳐보겠습니다...
+		 * 자동패킹버튼을 눌렀을 경우 _imageAddButton에 EnterFrame에 대한 리스너를 추가시켜줍니다.
 		 */		
 		private function onClickAutoButton(event:MouseEvent):void
 		{
@@ -329,6 +327,12 @@ package
 			_imageAddButton.addEventListener(Event.ENTER_FRAME, enterFram);
 		}
 		
+		/**
+		 *프레임이 넘어갈때마다 호출되게 되는 함수입니다. 
+		 * @param event
+		 * _frameCounter가 _frameLate에 도달하게되면 addImage함수를 호출합니다.
+		 * 마지막에 dataStack의 길이를 검사한 후 남아있는 데이터가없다면 _imageAddButton의 Enter_Frame에 대한 이벤트리스너를 해제시켜줍니다.
+		 */		
 		private function enterFram(event:Event):void
 		{
 			_frameCounter++;
