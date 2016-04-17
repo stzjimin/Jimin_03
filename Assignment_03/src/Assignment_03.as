@@ -17,7 +17,6 @@ package
 		private var _encoder:Encoder = new Encoder();
 		private var _file:File;
 		private var _progressText:TextField = new TextField();
-		private var _time:Number;
 		
 		private var _imageAddButton:SimpleButton;
 		private var _encodeButton:SimpleButton;
