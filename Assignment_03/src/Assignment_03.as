@@ -324,7 +324,7 @@ package
 			}
 			
 			_frameCounter = 0;
-			_imageAddButton.addEventListener(Event.ENTER_FRAME, enterFram);
+			_imageAddButton.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
 		/**
@@ -333,7 +333,7 @@ package
 		 * _frameCounter가 _frameLate에 도달하게되면 addImage함수를 호출합니다.
 		 * 마지막에 dataStack의 길이를 검사한 후 남아있는 데이터가없다면 _imageAddButton의 Enter_Frame에 대한 이벤트리스너를 해제시켜줍니다.
 		 */		
-		private function enterFram(event:Event):void
+		private function onEnterFrame(event:Event):void
 		{
 			_frameCounter++;
 			if(_frameCounter >= _frameLate)
@@ -344,23 +344,27 @@ package
 			if(_dataLoader.dataStack.length == 0)
 			{
 				preEncod();
-				_imageAddButton.removeEventListener(Event.ENTER_FRAME, enterFram);
+				_imageAddButton.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 			}
 		}
 		
 		/**
 		 *_imageAddButton의 클릭시 호출되는 함수 
 		 * @param event
-		 * 이미지 클릭 시 현제 화면을 이미지가 추가되어야하는 화면으로 전환시켜 줍니다.
-		 * _imageAddButton이 클릭되면 dataStack에 남아있는 데이터가 있다면 Packer클래스의 addImage함수를 호출합니다.
-		 * 호출된 Image정보를 받아와 화면에도 뿌려줍니다.
-		 * 더이상 출력할 이미지가 없다면 _autoPackButton과 _addImageButton을 잠금을 시켜줍니다.
+		 * addImage함수를 호출해줍니다.
 		 */		
 		private function onClickAddButton(event:MouseEvent):void
 		{
 			addImage();
 		}
 		
+		/**
+		 *실질적으로 화면에 이미지 하나를 추가시켜주는 함수입니다. 
+		 * 현제 화면을 이미지가 추가되어야하는 화면으로 전환시켜 줍니다.
+		 * dataStack에 남아있는 데이터가 있다면 Packer클래스의 addImage함수를 호출합니다.
+		 * 호출된 Image정보를 받아와 화면에도 뿌려줍니다.
+		 * 더이상 출력할 이미지가 없다면 _autoPackButton과 _addImageButton을 잠금을 시켜줍니다.
+		 */		
 		private function addImage():void
 		{
 			if(_maxCanvasCount != _currentCanvasCount)
@@ -414,13 +418,17 @@ package
 		/**
 		 *_encodeButton이 클릭되었을 때 호출되는 함수입니다. 
 		 * @param event
-		 * _currentCanvas를 인코딩되어야할 화면으로 옮겨준 후 setCanvas를 호출합니다.
+		 * preEncode함수를 호출해줍니다.
 		 */		
 		private function onClickEncodeButton(event:MouseEvent):void
 		{
 			preEncod();
 		}
 		
+		/**
+		 *인코딩전에 준비동작을 위한 함수입니다.
+		 * _currentCanvas를 인코딩되어야할 화면으로 옮겨준 후 setCanvas를 호출합니다.
+		 */		
 		private function preEncod():void
 		{
 			if(_maxCanvasCount != _currentCanvasCount)
