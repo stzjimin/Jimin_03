@@ -15,6 +15,7 @@ package
 	{
 		private var _packer:Packer;
 		private var _encoder:Encoder = new Encoder();
+		private var _dataLoader:DataLoader;
 		private var _file:File;
 		private var _progressText:TextField = new TextField();
 		
@@ -33,8 +34,6 @@ package
 		
 		private var _packFlag:Boolean = false;
 		private var _dataNumText:TextField = new TextField();
-		
-		private var _dataLoader:DataLoader;
 		
 		public function Assignment_03()
 		{

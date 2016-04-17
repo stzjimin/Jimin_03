@@ -14,7 +14,6 @@ package
 		private const fileReg:RegExp = new RegExp("(.png|.jpg|.jpeg)$", "m");
 		
 		private var _localPath:File;
-		private var _time:Number;
 		private var _count:int;
 		
 		public function Encoder()
@@ -30,7 +29,6 @@ package
 		public function initEncoder(libName:String):void
 		{
 			_localPath = File.desktopDirectory.resolvePath(libName + "_SpriteSheet");
-		//	_localPath = File.documentsDirectory.resolvePath("SpriteSheet");
 			_count = 0;
 		}
 		
