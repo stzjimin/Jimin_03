@@ -5,14 +5,14 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.events.TimerEvent;
 	import flash.filesystem.File;
 	import flash.text.TextField;
-	import flash.utils.Timer;
 
 	[SWF(width="1064", height="1064", frameRate="60", backgroundColor="#FFFFFF")]
 	public class Assignment_03 extends Sprite
 	{
+		private const _frameLate:int = 10;
+		
 		private var _packer:Packer;
 		private var _encoder:Encoder = new Encoder();
 		private var _dataLoader:DataLoader;
@@ -31,6 +31,7 @@ package
 		private var _currentCanvas:Sprite;
 		private var _currentCanvasCount:int = 0;
 		private var _maxCanvasCount:int = 0;
+		private var _frameCounter:int;
 		
 		private var _packFlag:Boolean = false;
 		private var _dataNumText:TextField = new TextField();
@@ -83,7 +84,6 @@ package
 			addButtonDownState.width = 100;
 			
 			_imageAddButton = new SimpleButton(addButtonUpState, addButtonUpState, addButtonDownState, addButtonDownState);
-			_imageAddButton.addEventListener(MouseEvent.CLICK, onClickAddButton);
 			//-------------------------------------------
 			
 			//출력폴더 선택 버튼---------------------------------
@@ -141,7 +141,6 @@ package
 			autoPackButtonDownState.width = 100;
 			
 			_autoPackButton = new SimpleButton(autoPackButtonUpState, autoPackButtonUpState, autoPackButtonDownState, autoPackButtonDownState);
-			_autoPackButton.addEventListener(MouseEvent.CLICK, onClickAutoButton);
 			_autoPackButton.x = 800;
 			//---------------------------------------
 			
@@ -275,6 +274,8 @@ package
 			this.removeChild(_selectInputDirectoryButton);
 			
 			_dataNumText.text = "남은 이미지 개수 : " + _dataLoader.dataStack.length.toString();
+			_imageAddButton.addEventListener(MouseEvent.CLICK, onClickAddButton);
+			_autoPackButton.addEventListener(MouseEvent.CLICK, onClickAutoButton);
 		}
 		
 		/**
@@ -324,21 +325,22 @@ package
 				_currentCanvasCount = _maxCanvasCount;
 			}
 			
-			var timer:Timer = new Timer(100, _dataLoader.dataStack.length);
-			timer.addEventListener(TimerEvent.TIMER, timerActive);
-			timer.addEventListener(TimerEvent.TIMER_COMPLETE, timerComplete);
-			timer.start();
-			
-			function timerActive():void
+			_frameCounter = 0;
+			_imageAddButton.addEventListener(Event.ENTER_FRAME, enterFram);
+		}
+		
+		private function enterFram(event:Event):void
+		{
+			_frameCounter++;
+			if(_frameCounter >= _frameLate)
 			{
-				addImage();					//Timer를 대체할 방법을 찾아보고는 있는데 어떤방법으로 해야할지 모르겠습니다. 우선은 timerActive가 주기적으로 하는일을 좀더 직관적으로 알수있도록 함수명을 바꿨습니다...
+				addImage();
+				_frameCounter = 0;
 			}
-			
-			function timerComplete():void
+			if(_dataLoader.dataStack.length == 0)
 			{
-				onClickEncodeButton(event);
-				timer.removeEventListener(TimerEvent.TIMER, timerActive);
-				timer.removeEventListener(TimerEvent.TIMER_COMPLETE, timerComplete);
+				preEncod();
+				_imageAddButton.removeEventListener(Event.ENTER_FRAME, enterFram);
 			}
 		}
 		
@@ -411,6 +413,11 @@ package
 		 * _currentCanvas를 인코딩되어야할 화면으로 옮겨준 후 setCanvas를 호출합니다.
 		 */		
 		private function onClickEncodeButton(event:MouseEvent):void
+		{
+			preEncod();
+		}
+		
+		private function preEncod():void
 		{
 			if(_maxCanvasCount != _currentCanvasCount)
 			{
